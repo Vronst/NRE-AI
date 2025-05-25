@@ -1,0 +1,32 @@
+[project]
+name = "nre-ai"
+version = "0.1.0"
+description = "AI for NewRomanEmpire game https://github.com/maryszawy/NRE"
+readme = "README.md"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Vronst", email = "vronst@gmail.com" },
+	{ name = "TekienAgata", email = ""},
+	{ name = 'maryszawy', email = ""}
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.12",
+    "matplotlib>=3.10.3",
+    "numpy>=2.2.6",
+    "pandas>=2.2.3",
+    "scikit-learn>=1.6.1",
+    "seaborn>=0.13.2",
+]
+
+[project.scripts]
+nre-ai = "nre_ai:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
