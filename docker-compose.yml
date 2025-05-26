@@ -15,7 +15,12 @@ services:
     # need to be changed to named volume like postgres
     # on produciton level only
     volumes:
-      - .:/app
+      - ./src/:/app/src
+      - ./scripts:/app/scripts
+      - ./tests/:/app/tests
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
+
     environment:
       UV_LINK_MODE: copy
       PATH: "/app/.venv/bin:$PATH"

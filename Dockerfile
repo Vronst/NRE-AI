@@ -1,4 +1,4 @@
-FROM python:3.12.10-slim as PYT
+FROM python:3.12.10-slim as pyt
 
 RUN pip install uv
 
@@ -15,6 +15,8 @@ COPY pyproject.toml uv.lock ./
 COPY scripts/ ./scripts/
 COPY src/ ./src/
 COPY tests/ ./tests/
+COPY README.md . 
+
 
 RUN export UV_ENV_FILE="$(pwd)"
 RUN uv sync --frozen
@@ -23,4 +25,4 @@ EXPOSE 8080
 EXPOSE 8000
 EXPOSE 9000
 
-CMD ["uv", "run", "nre_ai"]
+CMD ["uv", "run", "nre-ai"]
