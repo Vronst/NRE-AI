@@ -1,0 +1,46 @@
+name: Python regressions tests and draft pull request
+
+on:
+  push:
+    branches: [ "stage" ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install uv
+        if [ -f requirements.txt ]; then uv add -r requirements.txt; fi
+        uv sync --frozen
+
+    - name: Regression tests with pytest
+      run: |
+        uv run pytest
+    - name: Create Draft Pull Request to Stage
+      if: success()
+      uses: peter-evans/create-pull-request@v7
+      with:
+          base: main
+          token: ${{ secrets.PRO_TOKEN }}
+          commit-message: "Passed all tests"
+          branch: full-tests
+          branch-suffix: timestamp
+          title: "Tests passed"
+          body: |
+            This pull request contains the results of the latest tests.
+          signoff: true
+          delete-branch: true
+          draft: false
