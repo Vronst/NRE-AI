@@ -49,7 +49,7 @@ jobs:
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
           RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
           GITHUB_TOKEN: ${{ secrets.PRO_TOKEN }}
-        run:
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "$RELEASE_VERSION" -m "$RELEASE_NOTES"
