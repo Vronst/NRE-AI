@@ -26,21 +26,17 @@ jobs:
         if [ -f requirements.txt ]; then uv add -r requirements.txt; fi
         uv sync --frozen
 
-    - name: Regression tests with pytest
+    - name: Run all tests with pytest
       run: |
         uv run pytest
-    - name: Create Draft Pull Request to Stage
+    - name: Create Pull Request to Main
       if: success()
-      uses: peter-evans/create-pull-request@v7
-      with:
-          base: main
-          token: ${{ secrets.PRO_TOKEN }}
-          commit-message: "Passed all tests"
-          branch: full-tests
-          branch-suffix: timestamp
-          title: "Tests passed"
-          body: |
-            This pull request contains the results of the latest tests.
-          signoff: true
-          delete-branch: true
-          draft: false
+      run: |
+        gh pr create \
+          --base main \
+          --head stage \
+          --title "Tests passed" \
+          --body "Recent changes contained in this pull request has passed all tests"
+          --draft=false
+      env:
+        GH_TOKEN: ${{ secrets.PRO_TOKEN }}

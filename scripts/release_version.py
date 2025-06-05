@@ -1,8 +1,10 @@
 """
-This script compares the version specified in pyproject.toml with the latest Git tag.
+This script compares the version specified in pyproject.toml with the latest Git tag which will be echoed
+into env for future use.
 If the versions differ, it exits with code 0 to signal that a new release should be triggered.
 If the versions are the same, it exits with code 1, indicating no release is necessary.
 """
+import os
 import toml
 import subprocess
 import sys
@@ -34,6 +36,7 @@ def get_latest_tag():
 def main():
     """
     With help of get_current_version() and get_latest_tag(), prints versions diff and returns proper integer.
+    Echoes version into env.
 
     Returns:
         int: 0 if chenges exists, 1 if version is not changed.
@@ -43,6 +46,11 @@ def main():
 
     if latest_tag != current_version:
         print(f"Version changed: {latest_tag} -> {current_version}")
+        if github_env := os.getenv('GITHUB_ENV'):
+            with open(github_env, 'a') as env:
+                env.write(f"RELEASE_VERSION={current_version}\n")
+        else:
+            print(f"Writing to env failed with {current_version=}")
         sys.exit(0)
     else:
         print("Version unchanged.")

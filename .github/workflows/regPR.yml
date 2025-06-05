@@ -34,16 +34,12 @@ jobs:
         uv run pytest -m regression
     - name: Create Draft Pull Request to Stage
       if: success()
-      uses: peter-evans/create-pull-request@v7
-      with:
-          base: stage
-          token: ${{ secrets.PRO_TOKEN }}
-          commit-message: "Automated regression test results"
-          branch: regression-results
-          branch-suffix: timestamp
-          title: "Automated Regression Test Results"
-          body: |
-            This pull request contains the results of the latest regression tests.
-          signoff: true
-          delete-branch: true
-          draft: true
+      run: |
+        gh pr create \
+          --base stage \
+          --head develop \
+          --title "Regression tests passed" \
+          --body "Recent changes contained in this pull request has passed regressions tests."
+          --draft=true
+      env:
+        GH_TOKEN: ${{ secrets.PRO_TOKEN }}
