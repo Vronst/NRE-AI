@@ -39,7 +39,7 @@ jobs:
           --base stage \
           --head develop \
           --title "Regression tests passed" \
-          --body "Recent changes contained in this pull request has passed regressions tests."
+          --body "Recent changes contained in this pull request has passed regressions tests." \
           --draft=true
       env:
         GH_TOKEN: ${{ secrets.PRO_TOKEN }}

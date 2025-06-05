@@ -36,7 +36,7 @@ jobs:
           --base main \
           --head stage \
           --title "Tests passed" \
-          --body "Recent changes contained in this pull request has passed all tests"
+          --body "Recent changes contained in this pull request has passed all tests" \
           --draft=false
       env:
         GH_TOKEN: ${{ secrets.PRO_TOKEN }}
