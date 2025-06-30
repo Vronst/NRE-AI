@@ -1,0 +1,28 @@
+name: Tests and Pull Request Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+
+# needed permissions
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  tests:
+    uses: Vronst/testing_workflow/.github/workflows/testing_workflow.yml@2.0.0
+
+  create_PR:
+    needs: tests
+    uses: Vronst/pull_request_workflow/.github/workflows/pull_request.yml@1.1.0
+    with:
+      head: 'develop'
+      base: 'stage'
+      title: 'Tests passed'
+      body: 'Tests on lap branch has passed.'
+    secrets:
+      TOKEN: ${{ secrets.PRO_TOKEN }}
+
+

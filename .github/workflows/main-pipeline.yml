@@ -1,0 +1,34 @@
+name: Tests and Release Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+# needed permissions
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  tests:
+    uses: Vronst/testing_workflow/.github/workflows/testing_workflow.yml@2.0.0
+    with:
+      pytest_flags: '-m regression'
+
+  release:
+    needs: tests
+    uses: Vronst/release_workflow/.github/workflows/release.yml@3.0.0
+    with:
+      python-version: '3.13'
+    secrets:
+      TOKEN: ${{ secrets.PRO_TOKEN }}
+
+  documentation:
+    needs: 
+      - tests 
+      - release 
+    uses: Vronst/documentation_workflow/.github/workflows/doc_workflow.yml@1.0.1
+    with: 
+      python-version: '3.13'
+
