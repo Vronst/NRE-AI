@@ -30,7 +30,7 @@ services:
   db:
 
     image: postgres:17.2
-    container_name: postgres_db
+    container_name: nre_db
     restart: always
     environment:
       POSTGRES_USER: vronst
