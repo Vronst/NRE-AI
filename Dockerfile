@@ -30,4 +30,5 @@ EXPOSE 8080
 EXPOSE 8000
 EXPOSE 9000
 
-CMD ["uv", "run", "nre-ai"]
+# CMD ["uv", "run", "nre-ai"]
+CMD ["sleep", "infinity"]
