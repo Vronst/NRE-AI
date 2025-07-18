@@ -16,8 +16,16 @@ jobs:
     with: 
       container_name: 'nre'
 
+  lint_and_format:
+    uses: Vronst/lint-check/.github/workflows/lint.yaml@1.0.0
+    # (optional)
+    with:
+      python-version: '3.13'
+
   create_PR:
-    needs: tests
+    needs: 
+      - tests
+      - lint_and_format
     uses: Vronst/pull_request_workflow/.github/workflows/pull_request.yml@1.1.0
     with:
       head: 'stage'
