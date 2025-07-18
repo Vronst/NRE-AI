@@ -17,6 +17,12 @@ jobs:
       pytest_flags: '-m regression'
       container_name: 'nre'
 
+  lint_and_format:
+    uses: Vronst/lint-check/.github/workflows/lint.yaml@1.0.0
+    # (optional)
+    with:
+      python-version: '3.13'
+
   release:
     needs: tests
     uses: Vronst/release_workflow/.github/workflows/release.yml@3.0.0
