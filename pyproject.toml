@@ -47,6 +47,9 @@ pythonpath = "src/"
 [tool.ruff]
 line-length = 79
 indent-width = 4
+exclude = [
+	"docs",
+	]
 
 [tool.ruff.lint]
 extend-select = [
