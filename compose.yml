@@ -24,6 +24,7 @@ services:
     environment:
       UV_LINK_MODE: copy
       PATH: "/app/.venv/bin:$PATH"
+      CI: true
     networks:
       - app-network
 

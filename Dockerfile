@@ -6,6 +6,7 @@ RUN pip install uv
 ENV UV_LINK_MODE=copy
 # make .venv as primary python
 ENV PATH="/app/.venv/bin:$PATH"
+ENV CI=true
 
 WORKDIR /app
 
