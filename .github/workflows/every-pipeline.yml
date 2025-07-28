@@ -27,7 +27,7 @@ jobs:
     needs: 
       - tests
       - lint_and_format
-    uses: Vronst/pull_request_workflow/.github/workflows/pull_request.yml@1.1.0
+    uses: Vronst/pull_request_workflow/.github/workflows/pull_request.yml@1.2.0
     with:
       head: ${{ github.even.workflow_run.head_branch }}
       base: 'develop'
