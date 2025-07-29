@@ -26,7 +26,7 @@ jobs:
     needs: 
       - tests
       - lint_and_format
-    uses: Vronst/pull_request_workflow/.github/workflows/pull_request.yml@e8175c4049cdcf5d8ff336e8d212c569d75fb429
+    uses: Vronst/pull_request_workflow/.github/workflows/pull_request.yml@0c489777282fa664b8d77b60ebd5dd3aea3c2607
     with:
       head: 'stage'
       base: 'main'
