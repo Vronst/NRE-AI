@@ -3,7 +3,7 @@
 import json
 
 
-class DataLoader:
+class JsonManager:
     """Loads and saves data from to json file."""
 
     def __init__(self, path: str) -> None:
@@ -54,3 +54,15 @@ class DataLoader:
             list[dict]: list of cities before changes.
         """
         return self.data["cities"]
+
+    def save(self, data: dict) -> None:
+        """Saves data to json file.
+        
+        Args:
+            data (dict): dict with cities data.
+
+        Returns:
+            None
+        """
+        with open(self.path, 'w') as file:
+            json.dump(data, file, indent=2)

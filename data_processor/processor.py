@@ -5,24 +5,24 @@ from typing import Any
 
 from .city import City
 from .compare import commodieties_diff
-from .loader import DataLoader
+from .json_manager import JsonManager
 
 
 class CityProcessor:
     """Processes city data and players actions."""
 
-    def __init__(self, loader: DataLoader) -> None:
+    def __init__(self, json_manager: JsonManager) -> None:
         """Init.
 
         Args:
-            loader (DataLoader): loader responsible for
+            json_manager (DataLoader): json_manager responsible for
                 handing data to this class.
 
         Returns:
             None.
         """
-        self.loader = loader
-        # self.events = loader.events()
+        self.json_manager = json_manager
+        # self.events = json_manager.events()
 
     def get_dict_of_cities(self, state: str = "after") -> dict[str, City]:
         """Creates list of objects of City.
@@ -34,9 +34,9 @@ class CityProcessor:
             list[City]: list containing City objects.
         """
         requested: list = (
-            self.loader.cities_after
+            self.json_manager.cities_after
             if state == "after"
-            else self.loader.cities_before
+            else self.json_manager.cities_before
         )
         city_dict: dict[str, City] = {}
         for city in requested:
@@ -75,7 +75,7 @@ class CityProcessor:
         Returns:
             None
         """
-        self.cities = self.get_dict_of_cities()
+        self.cities: dict[str, City] = self.get_dict_of_cities()
         self.diff = self.get_comparison()
         fee_add = self._process_commodieties()
         self._process_fee(fee_add)
@@ -83,8 +83,15 @@ class CityProcessor:
         self.__save_changes()
 
     def __save_changes(self):
-        print(self.cities)
+        data: dict = {}
+        cities: list = []
+        for _, city in self.cities.items():
+            cities.append(city.to_dict())
 
+        data['cities'] = data['after'] = cities
+
+        self.json_manager.save(data)
+        
     def _process_commodieties(self) -> None:
         increase: int = 0
 
@@ -93,7 +100,8 @@ class CityProcessor:
                 quantity = data["quantity_diff"]
                 city_comm = self.cities[name].commodities[item_type]
 
-                self.__proces_quantity(city_comm, quantity)
+                # print(name, item_type)
+                self.__proces_quantity(city_comm, quantity, name, item_type)
 
                 change: int = round(
                     self.__process_price(city_comm, quantity), 0
@@ -101,7 +109,11 @@ class CityProcessor:
 
                 increase += change
 
-    def __proces_quantity(self, city_comm, quantity):
+    def __proces_quantity(self,
+                          city_comm: dict[str, int],
+                          quantity: int,
+                          name: str,
+                          item_type: str):
         if quantity == 0:
             return
 
@@ -109,24 +121,42 @@ class CityProcessor:
 
         # changes should occur only when change
         # in quanityt is signifacant
-        if abs((reg_quant - quantity) / reg_quant) < 0.5:
+        if abs(quantity) / reg_quant < 0.5:
             return
 
+        factories: dict[str, str] = {
+            'metal': '',
+            'gems': '',
+            'food': '',
+            'fuel': '',
+            'relics': '',
+        }
         # leaving up to chance posibility of changing standard
         # quality to limit player influence
+        if quantity < 0:
+            if factories[item_type] not in self.cities[name].factories:
+                low, high = .5, .75
+            else:
+                low, high = .95, 1
+        else:
+            low, high = 1.25, 1.5
+                
+            
         city_comm["regular_quantity"] = random.choice(
-            (reg_quant, reg_quant * random.uniform(1.25, 1.5))
+            (reg_quant, int(reg_quant * random.uniform(low, high)))
         )
+            
         city_comm["quantity"] = city_comm["regular_quantity"]
+        # print(city_comm['quantity'], city_comm)
 
     def __process_price(self, city_comm, quantity):
         reg_price = city_comm["regular_price"]
 
-        dif_price = reg_price * random.uniform(0.5, 0.10)
+        dif_price = reg_price * random.uniform(.05, .10)
         if quantity <= 0:
             dif_price *= -1
         city_comm["regular_price"] = random.choice(
-            (reg_price, reg_price + dif_price)
+            (reg_price, round(reg_price + dif_price, 2))
         )
 
         # to spice things up, sometimes instead of change of price
@@ -134,9 +164,14 @@ class CityProcessor:
         reg_price = city_comm["regular_price"]
         price = city_comm["price"]
         city_comm["price"] = random.choice(
-            (reg_price, price + (dif_price * price * 1.3))
+            (reg_price, round(price * .7, 0))
         )
 
+        if city_comm['price'] == 0:
+            city_comm['price'] = 1
+        if city_comm['regular_price'] == 0:
+            city_comm['regular_price'] = 1
+            
         return dif_price
 
     def _process_fee(self, fee_add):

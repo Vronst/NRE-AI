@@ -1,7 +1,7 @@
 [project]
 name = "nre-city"
-version = "0.1.0"
+version = "1.0.0"
 description = "This script processes input data about actions diricted to cities in NRE and outputs changes based on provided data"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = []
