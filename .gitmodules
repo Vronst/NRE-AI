@@ -1,0 +1,3 @@
+[submodule "NRE-City"]
+	path = submodules/NRE-City
+	url = git@github.com:Vronst/NRE-City.git
