@@ -6,7 +6,7 @@ readme = "README.md"
 license-files = ["LICENSE"]
 authors = [
     { name = "Vronst", email = "vronst@gmail.com" },
-	{ name = "TekienAgata", email = ""},
+	{ name = "TekienAgata", email = "tekienagata@gmail.com"},
 	{ name = 'maryszawy', email = ""}
 ]
 requires-python = ">=3.11"
