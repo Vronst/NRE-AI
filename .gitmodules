@@ -1,6 +1,6 @@
 [submodule "NRE-City"]
 	path = submodules/NRE-City
 	url = git@github.com:Vronst/NRE-City.git
-[submodule "NRE"]
+[submodule "submodules/NRE"]
 	path = submodules/NRE
 	url = git@github.com:maryszawy/NRE.git
