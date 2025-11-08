@@ -13,14 +13,14 @@ permissions:
 
 jobs:
   lint_and_format:
-    uses: Vronst/lint-check/.github/workflows/lint.yaml@1.0.0
+    uses: Vronst/lint-check/.github/workflows/lint.yaml@1.1.0
     # (optional)
     with:
       python-version: '3.13'
 
 
   tests:
-    uses: Vronst/testing_workflow/.github/workflows/testing_workflow.yml@2.0.0
+    uses: Vronst/testing_workflow/.github/workflows/testing_workflow.yml@2.2.0
 
 
   create_PR:
