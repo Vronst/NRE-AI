@@ -6,6 +6,12 @@ resolution-markers = [
     "python_full_version < '3.12'",
 ]
 
+[manifest]
+members = [
+    "nre-ai",
+    "nre-city",
+]
+
 [[package]]
 name = "alabaster"
 version = "1.0.0"
@@ -610,11 +616,12 @@ wheels = [
 
 [[package]]
 name = "nre-ai"
-version = "0.1.0"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "matplotlib" },
+    { name = "nre-city" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "scikit-learn" },
@@ -635,6 +642,7 @@ docs = [
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
     { name = "matplotlib", specifier = ">=3.10.3" },
+    { name = "nre-city", editable = "submodules/NRE-City" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "scikit-learn", specifier = ">=1.6.1" },
@@ -648,6 +656,11 @@ dev = [
     { name = "toml", specifier = ">=0.10.2" },
 ]
 docs = [{ name = "sphinx", specifier = ">=8.2.3" }]
+
+[[package]]
+name = "nre-city"
+version = "1.0.0"
+source = { editable = "submodules/NRE-City" }
 
 [[package]]
 name = "numpy"

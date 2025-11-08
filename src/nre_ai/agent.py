@@ -1,3 +1,5 @@
+"""Base simple AI."""
+
 import random
 
 from data_processor.city import City
@@ -5,10 +7,12 @@ from data_processor.city import City
 """
 Current issues:
 - no forced move if nothing sold or bought
-- observed division by 0 error in other versions if enough fruitful turns taken (rollback to this version)
+- observed division by 0 error in other versions
+    if enough fruitful turns taken (rollback to this version)
 - insufficient sample data to check travel logic
 - AI limits itself to one stock ATM
-- list of factories is not complete and private to this module, which may produce errors in case of changes
+- list of factories is not complete and private to this module,
+    which may produce errors in case of changes
 - NO TESTS!
 """
 
@@ -24,9 +28,12 @@ class AIAgent:
             initial_city (str): The name of the starting city.
         """
         self.money = money
-        self.inventory = {}  # {commodity_name: {'quantity': x, 'avg_buy_price': y}}
+        # {commodity_name: {'quantity': x, 'avg_buy_price': y}}
+        self.inventory = {}
         self.current_city_name = initial_city
-        self.travel_plan = None  # Tuple: (destination_city_name, best_commodity)
+        self.travel_plan = (
+            None  # Tuple: (destination_city_name, best_commodity)
+        )
 
     def _is_produced_locally(self, city: City, item_name: str) -> bool:
         """Checks if a commodity is likely produced in the city."""
@@ -37,7 +44,7 @@ class AIAgent:
             "food": "farm",
         }
         if item_name in factory_map:
-            return factory_map[item_name] in city.factories
+            return factory_map[item_name] in city.factory
         return False
 
     def take_turn(self, cities: dict[str, City]):
@@ -51,11 +58,13 @@ class AIAgent:
                     self.money -= fee
                     self.current_city_name = destination_name
                     print(
-                        f"AI traveled to {self.current_city_name}, paid {fee} fee. Money: {self.money}"
+                        f"AI traveled to {self.current_city_name},"
+                        f" paid {fee} fee. Money: {self.money}"
                     )
                 else:
                     print(
-                        f"AI cannot afford to travel to {self.current_city_name}. Cancelling travel."
+                        f"AI cannot afford to travel to "
+                        f"{self.current_city_name}. Cancelling travel."
                     )
             self.travel_plan = None  # Reset plan
 
@@ -90,13 +99,18 @@ class AIAgent:
                     city.commodities[item_name]["quantity"] += quantity_to_sell
 
                     print(
-                        f"AI sold {quantity_to_sell} of {item_name} in {self.current_city_name} for {market_price} each. Money: {self.money}"
+                        f"AI sold {quantity_to_sell} of {item_name} in "
+                        f"{self.current_city_name} for {market_price}"
+                        f" each. Money: {self.money}"
                     )
 
                     del self.inventory[item_name]
 
     def _buy_commodities(self, city: City):
-        """Buys commodities in the current city, prioritizing the best deals."""
+        """Buys commodities in the current city.
+
+        Prioritizing the best deals.
+        """
 
         def acquire(item_name, details, price):
             """Helper function to purchase a commodity."""
@@ -115,7 +129,10 @@ class AIAgent:
                 details["quantity"] -= quantity_to_buy
 
                 if item_name not in self.inventory:
-                    self.inventory[item_name] = {"quantity": 0, "avg_buy_price": 0}
+                    self.inventory[item_name] = {
+                        "quantity": 0,
+                        "avg_buy_price": 0,
+                    }
 
                 # Update average buy price
                 current_quant = self.inventory[item_name]["quantity"]
@@ -131,7 +148,9 @@ class AIAgent:
                 self.inventory[item_name]["quantity"] += quantity_to_buy
 
                 print(
-                    f"AI bought {quantity_to_buy} of {item_name} in {self.current_city_name} for {price} each. Money: {self.money}"
+                    f"AI bought {quantity_to_buy} of {item_name} in "
+                    f"{self.current_city_name} for {price} each."
+                    f" Money: {self.money}"
                 )
                 return True
             return False
@@ -193,7 +212,8 @@ class AIAgent:
             acquire(deal["name"], deal["details"], deal["price"])
 
         # 4. If inventory is *still* empty, buy *anything* affordable
-        # This checks inventory quantity, not just if we bought something this turn
+        # This checks inventory quantity, not just if we bought
+        # something this turn
         is_inventory_empty = not any(
             info["quantity"] > 0 for info in self.inventory.values()
         )
@@ -216,7 +236,8 @@ class AIAgent:
             if cheapest_item:
                 item_name, details = cheapest_item
                 print(
-                    f"AI has empty inventory, buying cheapest available item: {item_name}"
+                    f"AI has empty inventory, buying cheapest "
+                    f"available item: {item_name}"
                 )
                 acquire(item_name, details, details["price"])
 
@@ -240,8 +261,9 @@ class AIAgent:
                     and item_name in destination_city.commodities
                     and destination_city.commodities[item_name]
                 ):
-
-                    sell_price = destination_city.commodities[item_name]["price"]
+                    sell_price = destination_city.commodities[item_name][
+                        "price"
+                    ]
                     avg_buy_price = inv_details["avg_buy_price"]
                     profit_per_unit = sell_price - avg_buy_price
 
@@ -254,7 +276,8 @@ class AIAgent:
                         best_profit = potential_profit
                         best_destination = destination_name
 
-            # If no inventory profit, check for *potential* profit (buy here, sell there)
+            # If no inventory profit, check for *potential*
+            # profit (buy here, sell there)
             if best_profit <= 0:
                 for item_name, buy_details in current_city.commodities.items():
                     if (
@@ -265,7 +288,9 @@ class AIAgent:
                         continue
 
                     buy_price = buy_details["price"]
-                    sell_price = destination_city.commodities[item_name]["price"]
+                    sell_price = destination_city.commodities[item_name][
+                        "price"
+                    ]
 
                     profit_per_unit = sell_price - buy_price
 
@@ -280,17 +305,21 @@ class AIAgent:
         if best_destination and best_profit > 0:
             self.travel_plan = (best_destination, None)
             print(
-                f"AI plans to travel to {best_destination} for an estimated profit of {best_profit}."
+                f"AI plans to travel to {best_destination} for"
+                f" an estimated profit of {best_profit}."
             )
         else:
             if current_city.connections:
                 # Filter out cities not present in the main dictionary
-                valid_connections = [c for c in current_city.connections if c in cities]
+                valid_connections = [
+                    c for c in current_city.connections if c in cities
+                ]
                 if valid_connections:
                     random_destination = random.choice(valid_connections)
                     self.travel_plan = (random_destination, None)
                     print(
-                        f"AI has no profitable route, plans to travel randomly to {random_destination}."
+                        f"AI has no profitable route, plans to travel"
+                        f"randomly to {random_destination}."
                     )
 
     def is_bankrupt(self) -> bool:

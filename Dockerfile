@@ -7,17 +7,17 @@ ENV UV_LINK_MODE=copy
 # make .venv as primary python
 ENV PATH="/app/.venv/bin:$PATH"
 ENV CI=true
+ENV CITY_PATH='/app/submodules/NRE/Assets/StreamingAssets/miasta.json'
 
 WORKDIR /app
 
 # run first to avoid rebuilding if not necessary
 COPY pyproject.toml uv.lock README.md ./
 
-# not safe
-# COPY .env .
 COPY scripts/ ./scripts/
 COPY src/ ./src/
 COPY tests/ ./tests/
+COPY submodules/ ./submodules/
 COPY README.md . 
 COPY docs/ ./docs/
 COPY release-notes.txt ./release-notes.txt 
