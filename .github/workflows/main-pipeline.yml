@@ -25,7 +25,7 @@ jobs:
 
   release:
     needs: tests
-    uses: Vronst/release_workflow/.github/workflows/release.yml@3.0.0
+    uses: Vronst/release_workflow/.github/workflows/release.yml@3.1.0
     with:
       python-version: '3.13'
     secrets:
