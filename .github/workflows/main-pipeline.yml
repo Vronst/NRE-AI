@@ -12,20 +12,20 @@ permissions:
 
 jobs:
   tests:
-    uses: Vronst/testing_workflow/.github/workflows/testing_workflow.yml@2.1.0
+    uses: Vronst/testing_workflow/.github/workflows/testing_workflow.yml@2.2.0
     with:
       pytest_flags: '-m regression'
       container_name: 'nre'
 
   lint_and_format:
-    uses: Vronst/lint-check/.github/workflows/lint.yaml@1.0.0
+    uses: Vronst/lint-check/.github/workflows/lint.yaml@1.1.0
     # (optional)
     with:
       python-version: '3.13'
 
   release:
     needs: tests
-    uses: Vronst/release_workflow/.github/workflows/release.yml@3.0.0
+    uses: Vronst/release_workflow/.github/workflows/release.yml@3.1.0
     with:
       python-version: '3.13'
     secrets:

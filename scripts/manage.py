@@ -5,9 +5,8 @@ import sys
 
 # Add src to python path to allow imports from sibling directories
 sys.path.insert(
-    0,
-    os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..")))
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)
 
 from data_processor.json_manager import JsonManager
 from data_processor.processor import CityProcessor
@@ -18,15 +17,16 @@ from src.nre_ai.agent import AIAgent
 def run_ai_simulation():
     """Runs the AI simulation for a number of turns."""
     # 1. Initialization
-    json_path = os.getenv('CITY_PATH', None)
+    json_path = os.getenv("CITY_PATH", None)
     if not json_path:
         raise KeyError("Path for json file with city data not provided")
     json_manager = JsonManager(json_path)
     processor = CityProcessor(json_manager)
 
     initial_cities = processor.get_dict_of_cities("before")
-    initial_city_name = \
+    initial_city_name = (
         list(initial_cities.keys())[0] if initial_cities else None
+    )
 
     if not initial_city_name:
         print("Error: No cities found in data file.")
@@ -42,7 +42,7 @@ def run_ai_simulation():
         # Reload data at the start of the turn
         json_manager(json_path)
 
-        # Get current state of the world 
+        # Get current state of the world
         # ('after' and 'cities' are identical at this point)
         cities_state = processor.get_dict_of_cities("after")
 
@@ -71,8 +71,10 @@ def run_ai_simulation():
         print(f"End of turn {turn}. AI has {agent.money:.2f} money.")
 
     print("\n--- Simulation Finished ---")
-    print(f"Final AI state: Money = {agent.money:.2f},"
-          f" Inventory = {agent.inventory}")
+    print(
+        f"Final AI state: Money = {agent.money:.2f},"
+        f" Inventory = {agent.inventory}"
+    )
 
 
 if __name__ == "__main__":
