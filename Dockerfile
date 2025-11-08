@@ -14,8 +14,6 @@ WORKDIR /app
 # run first to avoid rebuilding if not necessary
 COPY pyproject.toml uv.lock README.md ./
 
-# not safe
-# COPY .env .
 COPY scripts/ ./scripts/
 COPY src/ ./src/
 COPY tests/ ./tests/
@@ -25,7 +23,6 @@ COPY docs/ ./docs/
 COPY release-notes.txt ./release-notes.txt 
 COPY release-title.txt ./release-title.txt
 
-RUN git submodules update --init --activate
 RUN uv sync --frozen
 
 RUN export UV_ENV_FILE="$(pwd)"
