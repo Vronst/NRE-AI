@@ -44,7 +44,7 @@ class AIAgent:
             "food": "farm",
         }
         if item_name in factory_map:
-            return factory_map[item_name] in city.factories
+            return factory_map[item_name] in city.factory
         return False
 
     def take_turn(self, cities: dict[str, City]):

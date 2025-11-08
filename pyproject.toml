@@ -13,6 +13,7 @@ requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.115.12",
     "matplotlib>=3.10.3",
+    "nre-city",
     "numpy>=2.2.6",
     "pandas>=2.2.3",
     "scikit-learn>=1.6.1",
@@ -71,6 +72,14 @@ indent-style = "space"
 docstring-code-format = true
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.uv.workspace]
+members = [
+    "submodules/NRE-City",
+]
+
+[tool.uv.sources]
+nre-city = { workspace = true }
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
