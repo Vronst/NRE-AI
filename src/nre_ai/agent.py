@@ -11,7 +11,7 @@ Current issues:
     if enough fruitful turns taken (rollback to this version)
 - insufficient sample data to check travel logic
 - AI limits itself to one stock ATM
-- list of factories is not complete and private to this module,
+- list of factory is not complete and private to this module,
     which may produce errors in case of changes
 - NO TESTS!
 """
