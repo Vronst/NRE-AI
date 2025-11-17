@@ -1,24 +1,42 @@
-"""Placeholder later to be removed."""
+# noqa: D100
+# import json
 
 import pytest
+from data_processor.processor import factory as factory_map
 
-from nre_ai.agent import AIAgent as agent
+from nre_ai.agent import AIAgent as Agent
 
-city: str = ''
+# with open('../test_city_data.json') as file:
+#     data = json.load(file)
+
+# city: str = data['after'][0]['name']
+city: str = 'none'
 agents: list = [
-    agent(0, city),
-    agent(10, city),
-    agent(100, city),
-    agent(-1, city),
-    agent(1, city),
-    agent(-100, city),
+    Agent(0, city),
+    Agent(10, city),
+    Agent(100, city),
+    Agent(-1, city),
+    Agent(1, city),
+    Agent(-100, city),
 ]
 
-@pytest.mark.parametrize('agent', agents)
 class TestAgentAI:  # noqa
     
-    @pytest.mark.regression
+    @pytest.mark.parametrize('agent', agents)
     def test_bankruptcy(self, agent): #noqa
         if agent.money <= 0:
             assert agent.is_bankrupt()
 
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize('agent', agents)
+    def test_is_produced_locally(self,  # noqa
+                                 agent,
+                                 mock_city_all,
+                                 mock_city_no_factory
+                                 ):
+        factory = list(factory_map.keys())[0]
+        assert not agent._is_produced_locally(mock_city_no_factory,
+                                          factory)
+        assert agent._is_produced_locally(mock_city_all,
+                                         factory)

@@ -1,17 +1,16 @@
 """Script to manage AI learning."""
 
 import os
-import sys
 
-# Add src to python path to allow imports from sibling directories
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-)
-
+# import sys
+# # Add src to python path to allow imports from sibling directories
+# sys.path.insert(
+#     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# )
 from data_processor.json_manager import JsonManager
 from data_processor.processor import CityProcessor
 
-from src.nre_ai.agent import AIAgent
+from nre_ai.agent import AIAgent
 
 
 def run_ai_simulation():
@@ -23,7 +22,11 @@ def run_ai_simulation():
     json_manager = JsonManager(json_path)
     processor = CityProcessor(json_manager)
 
-    initial_cities = processor.get_dict_of_cities("before")
+    # TODO: wouldn't it be better to be random?
+    # if so money should be adjusted
+    # otherwise delete this
+    # after -> because before is only for processor
+    initial_cities = processor.get_dict_of_cities("after")
     initial_city_name = (
         list(initial_cities.keys())[0] if initial_cities else None
     )
