@@ -9,8 +9,6 @@ from data_processor.processor import factory as factory_map
 """
 Current issues:
 - no forced move if nothing sold or bought
-- observed division by 0 error in other versions
-    if enough fruitful turns taken (rollback to this version)
 - insufficient sample data to check travel logic
 - AI limits itself to one stock ATM
 - NO TESTS!
