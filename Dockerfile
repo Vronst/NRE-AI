@@ -1,4 +1,4 @@
-FROM python:3.12.10-slim as pyt
+FROM python:3.12.10-slim AS pyt
 
 RUN pip install uv
 
@@ -24,6 +24,9 @@ COPY release-notes.txt ./release-notes.txt
 COPY release-title.txt ./release-title.txt
 
 RUN uv sync --frozen
+RUN uv tool install ruff
+RUN echo "alias lint1='uv tool run ruff check --fix'" >> /root/.bashrc \
+ && echo "alias lint2='uv tool run ruff format'" >> /root/.bashrc
 
 RUN export UV_ENV_FILE="$(pwd)"
 

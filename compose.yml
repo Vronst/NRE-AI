@@ -16,6 +16,7 @@ services:
     # on produciton level only
     volumes:
       - ./src/:/app/src
+      - ./submodules/:/app/submodules
       - ./scripts:/app/scripts
       - ./tests/:/app/tests
       - ./pyproject.toml:/app/pyproject.toml
