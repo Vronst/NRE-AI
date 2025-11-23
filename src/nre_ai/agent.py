@@ -3,8 +3,8 @@
 import random
 
 # it works trust me xd
-from data_processor.city import City
-from data_processor.processor import factory as factory_map
+from nrecity import City
+from nrecity import factory as factory_map
 
 """
 Current issues:
@@ -36,6 +36,8 @@ class AIAgent:
     def _is_produced_locally(self, city: City, item_name: str) -> bool:
         """Checks if a commodity is likely produced in the city."""
         # Simple heuristic to determine if an item is local
+        # FIXME:
+        # will we ever have different setup of commodieites?
         if item_name in factory_map:
             return factory_map[item_name] in city.factory
         return False
@@ -251,6 +253,9 @@ class AIAgent:
             for item_name, inv_details in self.inventory.items():
                 if (
                     inv_details["quantity"] > 0
+                    # is check for destination_city.commodities
+                    # necessary if citites uses the same
+                    # schema?
                     and item_name in destination_city.commodities
                     and destination_city.commodities[item_name]
                 ):
