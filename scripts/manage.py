@@ -2,13 +2,7 @@
 
 import os
 
-# import sys
-# # Add src to python path to allow imports from sibling directories
-# sys.path.insert(
-#     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-# )
-from data_processor.json_manager import JsonManager
-from data_processor.processor import CityProcessor
+from nrecity import CityProcessor, JsonManager
 
 from nre_ai.agent import AIAgent
 

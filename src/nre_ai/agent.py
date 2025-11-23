@@ -3,8 +3,8 @@
 import random
 
 # it works trust me xd
-from data_processor.city import City
-from data_processor.processor import factory as factory_map
+from nrecity import City
+from nrecity import factory as factory_map
 
 """
 Current issues:

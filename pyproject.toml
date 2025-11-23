@@ -20,6 +20,11 @@ dependencies = [
     "seaborn>=0.13.2",
 ]
 
+[tool.basedpyright]  # I use this as lsp, add yours if needed
+venvPath = "."
+venv = ".venv"
+extraPaths = ['submodule/NRE-City']
+
 [project.scripts]
 nre-ai = "nre_ai:main"
 
@@ -55,7 +60,7 @@ exclude = [
 extend-select = [
 	"UP",  # pyupgrade
 	"D",  # pydocstyle
-	"F",  # flake8 
+	"F",  # flake8
 	"E",  # pycodestyle
 	"B",  # flake8-bugbear
 	"SIM",  # flake8-simplify
