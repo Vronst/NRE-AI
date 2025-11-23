@@ -2,7 +2,7 @@
 from types import SimpleNamespace
 
 import pytest
-from data_processor.processor import factory as factory_map
+from nrecity import factory as factory_map
 
 
 def make_city(name='test', connections=None, fee=0, commodities=None, **kwargs):  # noqa
@@ -11,10 +11,10 @@ def make_city(name='test', connections=None, fee=0, commodities=None, **kwargs):
     if not commodities:
         commodities = {}
     return SimpleNamespace(
-        name=name, 
-        connections=connections, 
-        fee=fee, 
-        commodities=commodities, 
+        name=name,
+        connections=connections,
+        fee=fee,
+        commodities=commodities,
         **kwargs
         )
 

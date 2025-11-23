@@ -4,7 +4,7 @@
 import random
 
 import pytest
-from data_processor.processor import factory as factory_map
+from nrecity import factory as factory_map
 
 from nre_ai.agent import AIAgent as Agent
 
@@ -24,7 +24,7 @@ agents: list = [
 
 
 class TestAgentAIBankruptcy:  # noqa
-        
+
     @pytest.mark.parametrize("agent", agents)
     def test_bankruptcy(self, agent):  # noqa
         if agent.money <= 0:
@@ -39,7 +39,7 @@ class TestAgentAIIsProducedLocaly:  # noqa
         agent,
         city_factory
     ):
-        
+
         no_factories = city_factory(factory=[])
         all_factories = city_factory(factory=list(factory_map.values()))
         factory = list(factory_map.keys())[0]
