@@ -2,10 +2,11 @@
 from types import SimpleNamespace
 
 import pytest
-from nrecity import factory as factory_map
 
 
-def make_city(name='test', connections=None, fee=0, commodities=None, **kwargs):  # noqa
+def make_city(
+    name="test", connections=None, fee=0, commodities=None, **kwargs
+):  # noqa
     if not connections:
         connections = []
     if not commodities:
@@ -15,13 +16,15 @@ def make_city(name='test', connections=None, fee=0, commodities=None, **kwargs):
         connections=connections,
         fee=fee,
         commodities=commodities,
-        **kwargs
-        )
+        **kwargs,
+    )
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def city_factory():  # noqa
     return make_city
+
+
 # class MockCityAll:  # noqa
 #     def __init__(self, factories: str = "all"):  # noqa
 #         if factories == "all":

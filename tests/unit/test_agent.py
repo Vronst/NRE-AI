@@ -24,22 +24,20 @@ agents: list = [
 
 
 class TestAgentAIBankruptcy:  # noqa
-
     @pytest.mark.parametrize("agent", agents)
     def test_bankruptcy(self, agent):  # noqa
         if agent.money <= 0:
             assert agent.is_bankrupt()
 
-class TestAgentAIIsProducedLocaly:  # noqa
 
+class TestAgentAIIsProducedLocaly:  # noqa
     @pytest.mark.regression
     @pytest.mark.parametrize("agent", agents)
     def test_is_produced_locally(  # noqa
         self,  # noqa
         agent,
-        city_factory
+        city_factory,
     ):
-
         no_factories = city_factory(factory=[])
         all_factories = city_factory(factory=list(factory_map.values()))
         factory = list(factory_map.keys())[0]
@@ -48,15 +46,15 @@ class TestAgentAIIsProducedLocaly:  # noqa
 
 
 class TestAgentAIPlanNextTravel:  # noqa
-
     def test_plan_next_travel_prefers_selling_inventory(self, city_factory):  # noqa
         a = city_factory("A", connections=["B"], commodities={})
-        b = city_factory("B", fee=5,
-                         commodities={"apple": {"price": 20, "quantity": 100}})
+        b = city_factory(
+            "B", fee=5, commodities={"apple": {"price": 20, "quantity": 100}}
+        )
 
         cities = {"A": a, "B": b}
 
-        agent = Agent(money=0, initial_city='A')
+        agent = Agent(money=0, initial_city="A")
         # Give agent inventory with profit if sold in B
         agent.inventory = {"item1": {"quantity": 10, "avg_buy_price": 10}}
 
@@ -64,13 +62,17 @@ class TestAgentAIPlanNextTravel:  # noqa
 
         assert agent.travel_plan == ("B", None)
 
-
     def test_plan_next_travel_considers_buy_then_sell_potential(  # noqa
-        self, city_factory):
-        a = city_factory("A", connections=["B"],
-                         commodities={"apple": {"price": 5, "quantity": 100}})
-        b = city_factory("B", fee=10,
-                         commodities={"apple": {"price": 15, "quantity": 100}})
+        self, city_factory
+    ):
+        a = city_factory(
+            "A",
+            connections=["B"],
+            commodities={"apple": {"price": 5, "quantity": 100}},
+        )
+        b = city_factory(
+            "B", fee=10, commodities={"apple": {"price": 15, "quantity": 100}}
+        )
 
         cities = {"A": a, "B": b}
 
@@ -81,11 +83,9 @@ class TestAgentAIPlanNextTravel:  # noqa
 
         assert agent.travel_plan == ("B", None)
 
-
     def test_plan_next_travel_picks_random_connection_when_no_profit(  # noqa
-        self,
-        city_factory,
-        monkeypatch):
+        self, city_factory, monkeypatch
+    ):
         # No profitable opportunities;
         # ensure random.choice is used for determinism.
         a = city_factory("A", connections=["B", "C"], commodities={})
@@ -104,10 +104,11 @@ class TestAgentAIPlanNextTravel:  # noqa
 
         assert agent.travel_plan == ("C", None)
 
-
-    def test_plan_next_travel_skips_missing_cities(self,  # noqa
-                                                   city_factory,
-                                                   monkeypatch):
+    def test_plan_next_travel_skips_missing_cities(
+        self,  # noqa
+        city_factory,
+        monkeypatch,
+    ):
         # Connections include a missing city 'X' which should be ignored.
         a = city_factory("A", connections=["X", "B"], commodities={})
         b = city_factory("B", fee=1000, commodities={})
