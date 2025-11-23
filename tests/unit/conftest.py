@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 
 
-def make_city(
+def make_city(  # noqa
     name="test", connections=None, fee=0, commodities=None, **kwargs
 ):  # noqa
     if not connections:

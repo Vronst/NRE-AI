@@ -104,8 +104,8 @@ class TestAgentAIPlanNextTravel:  # noqa
 
         assert agent.travel_plan == ("C", None)
 
-    def test_plan_next_travel_skips_missing_cities(
-        self,  # noqa
+    def test_plan_next_travel_skips_missing_cities(  # noqa
+        self,
         city_factory,
         monkeypatch,
     ):
