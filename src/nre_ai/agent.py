@@ -2,17 +2,15 @@
 
 import random
 
-from data_processor.city import City
+# it works trust me xd
+from nrecity import City
+from nrecity import factory as factory_map
 
 """
 Current issues:
 - no forced move if nothing sold or bought
-- observed division by 0 error in other versions
-    if enough fruitful turns taken (rollback to this version)
 - insufficient sample data to check travel logic
 - AI limits itself to one stock ATM
-- list of factories is not complete and private to this module,
-    which may produce errors in case of changes
 - NO TESTS!
 """
 
@@ -38,11 +36,8 @@ class AIAgent:
     def _is_produced_locally(self, city: City, item_name: str) -> bool:
         """Checks if a commodity is likely produced in the city."""
         # Simple heuristic to determine if an item is local
-        factory_map = {
-            "metal": "mine",
-            "gems": "mine",
-            "food": "farm",
-        }
+        # FIXME:
+        # will we ever have different setup of commodieites?
         if item_name in factory_map:
             return factory_map[item_name] in city.factory
         return False
@@ -258,6 +253,9 @@ class AIAgent:
             for item_name, inv_details in self.inventory.items():
                 if (
                     inv_details["quantity"] > 0
+                    # is check for destination_city.commodities
+                    # necessary if citites uses the same
+                    # schema?
                     and item_name in destination_city.commodities
                     and destination_city.commodities[item_name]
                 ):
