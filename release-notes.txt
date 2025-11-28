@@ -1,3 +1,2 @@
-Opracowanie mapy świata, dodanie
-miast, podstawowe UI (menu, panel
-gracza)
+Implementacja botów handlowych w Pythonie, logika decyzji
+(kupno/sprzedaż, podróże)

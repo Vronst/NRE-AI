@@ -1,6 +1,6 @@
 [project]
 name = "nre-ai"
-version = "0.3.0"
+version = "0.5.0"
 description = "AI for NewRomanEmpire game https://github.com/maryszawy/NRE"
 readme = "README.md"
 license-files = ["LICENSE"]
@@ -11,7 +11,6 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi[standard]>=0.115.12",
     "matplotlib>=3.10.3",
     "nre-city",
     "numpy>=2.2.6",

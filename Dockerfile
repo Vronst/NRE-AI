@@ -7,8 +7,7 @@ ENV UV_LINK_MODE=copy
 # make .venv as primary python
 ENV PATH="/app/.venv/bin:$PATH"
 ENV CI=true
-ENV CITY_PATH='/app/submodules/NRE/Assets/StreamingAssets/miasta.json'
-ENV CITY_RULES='/app/submodules/NRE/Assets/StreamingAssets/city_rules.json'
+ENV DATA_PATH='/app/submodules/NRE/Assets/Data/Save/'
 
 WORKDIR /app
 
@@ -27,7 +26,7 @@ COPY release-title.txt ./release-title.txt
 RUN uv sync --frozen
 RUN uv tool install ruff
 RUN echo "alias lint1='uv tool run ruff check --fix'" >> /root/.bashrc \
- && echo "alias lint2='uv tool run ruff format'" >> /root/.bashrc
+    && echo "alias lint2='uv tool run ruff format'" >> /root/.bashrc
 
 RUN export UV_ENV_FILE="$(pwd)"
 
