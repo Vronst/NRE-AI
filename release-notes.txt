@@ -1,2 +1,12 @@
 Implementacja botów handlowych w Pythonie, logika decyzji
 (kupno/sprzedaż, podróże)
+
+## Nre-City
+- Wprowadzony zostal system wyboru eventow, ktory faworyzuje elementy rzadziej wybierane,
+- Dodane klase typu signleton do nadzoru stworzonych obiektów JsonManager
+- Dodano wymagane pliki typu *.json
+- Wprowadzony proceros eventow aplikujacy eventy targetujace miasta
+
+## Nre-AI
+
+## Nre
