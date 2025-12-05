@@ -10,10 +10,10 @@ from nre_ai.agent import AIAgent
 def run_ai_simulation():
     """Runs the AI simulation for a number of turns."""
     # 1. Initialization
-    json_path = os.getenv("CITY_PATH", None)
+    json_path = os.getenv("DATA_PATH", None)
     if not json_path:
         raise KeyError("Path for json file with city data not provided")
-    json_manager = JsonManager(json_path)
+    json_manager = JsonManager(json_path + "miasta.json")
     processor = CityProcessor(json_manager)
 
     # TODO: wouldn't it be better to be random?
@@ -37,7 +37,7 @@ def run_ai_simulation():
         print(f"\n--- Turn {turn} ---")
 
         # Reload data at the start of the turn
-        json_manager(json_path)
+        json_manager()
 
         # Get current state of the world
         # ('after' and 'cities' are identical at this point)
