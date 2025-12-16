@@ -11,6 +11,7 @@ from nrecity import CityProcessor, DataManager, EventProcessor
 
 from .agent import AIAgent
 from .bot_state_processor import BotStateProcessor
+from .manager import BotManager
 
 PATH: str = os.environ["DATA_PATH"]
 
