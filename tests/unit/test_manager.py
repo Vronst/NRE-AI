@@ -3,10 +3,7 @@
 from unittest.mock import MagicMock, call
 
 import pytest
-<<<<<<< HEAD
 
-=======
->>>>>>> main
 from nre_ai.agent import AIAgent
 from nre_ai.bot_state_processor import BotStateProcessor
 from nre_ai.manager import BotManager

@@ -1,14 +1,8 @@
 """Tests for the BotStateProcessor."""
 
-<<<<<<< HEAD
 import os
 import shutil
 
-=======
-import json
-import os
-import shutil
->>>>>>> main
 import pytest
 
 from nre_ai.bot_state_processor import BotStateProcessor
@@ -29,17 +23,13 @@ def bot_data():
     return {
         "name": "test_bot_1",
         "zloto": 1000,
-<<<<<<< HEAD
-        "ekwipunek": {"metal": 10, "gems": 5, "food": 20, "fuel": 15, "relics": 1},
-=======
         "ekwipunek": {
             "metal": 10,
             "gems": 5,
             "food": 20,
             "fuel": 15,
-            "relics": 1
-        }
->>>>>>> main
+            "relics": 1,
+        },
     }
 
 
@@ -54,11 +44,7 @@ def test_initialization_with_env_variable(monkeypatch):
     """Test initialization using an environment variable."""
     env_path = "env_test_path"
     monkeypatch.setenv("BOT_STATE_PATH", env_path)
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     try:
         processor = BotStateProcessor()
         assert processor.base_path == env_path
@@ -71,11 +57,7 @@ def test_initialization_with_env_variable(monkeypatch):
 def test_initialization_fails_if_no_path_provided(monkeypatch):
     """Test that initialization fails if no path is given."""
     monkeypatch.delenv("BOT_STATE_PATH", raising=False)
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     with pytest.raises(ValueError):
         BotStateProcessor()
 
@@ -104,11 +86,7 @@ def test_save_bot_state_no_name(test_dir, bot_data):
     processor = BotStateProcessor(test_dir)
     bot_data_no_name = bot_data.copy()
     del bot_data_no_name["name"]
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     with pytest.raises(KeyError):
         processor.save_bot_state(bot_data_no_name)
 
@@ -119,15 +97,9 @@ def test_multiple_bots(test_dir, bot_data):
     bot_2_data = {
         "name": "test_bot_2",
         "zloto": 500,
-<<<<<<< HEAD
         "ekwipunek": {"metal": 5, "gems": 2},
     }
 
-=======
-        "ekwipunek": {"metal": 5, "gems": 2}
-    }
-    
->>>>>>> main
     processor.save_bot_state(bot_data)
     processor.save_bot_state(bot_2_data)
 
