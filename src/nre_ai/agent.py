@@ -18,6 +18,7 @@ Current issues:
 class AIAgent:
     """Represents the AI agent."""
 
+<<<<<<< HEAD
     def __init__(
         self,
         name: str,
@@ -25,6 +26,9 @@ class AIAgent:
         initial_city: str,
         factory_map: dict | None = None,
     ):
+=======
+    def __init__(self, name: str, money: int, initial_city: str, factory_map: dict | None = None):
+>>>>>>> main
         """Initializes the AI agent.
 
         Args:
@@ -51,7 +55,12 @@ class AIAgent:
             "name": self.name,
             "zloto": self.money,
             "ekwipunek": {
+<<<<<<< HEAD
                 item: details["quantity"] for item, details in self.inventory.items()
+=======
+                item: details["quantity"]
+                for item, details in self.inventory.items()
+>>>>>>> main
             },
         }
 
