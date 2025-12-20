@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 from nrecity import CityProcessor, DataManager, EventProcessor
 
 from .agent import AIAgent
+from .bot_state_processor import BotStateProcessor
 
 PATH: str = os.environ["DATA_PATH"]
 
