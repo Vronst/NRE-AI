@@ -15,12 +15,8 @@ DEFAULT_CITY = "test_city"
 def agent_factory():
     """Factory to create agents for tests."""
 
-    def _create_agent(
-        name="test_agent", money=1000, city=DEFAULT_CITY, factory_map=None
-    ):
-        return Agent(
-            name=name, money=money, initial_city=city, factory_map=factory_map
-        )
+    def _create_agent(name="test_agent", money=1000, city=DEFAULT_CITY, factory_map=None):
+        return Agent(name=name, money=money, initial_city=city, factory_map=factory_map)
 
     return _create_agent
 
@@ -69,9 +65,7 @@ class TestAgentBankruptcy:
             (0, True, False),  # Not bankrupt: No money, but has items to sell
         ],
     )
-    def test_bankruptcy_conditions(
-        self, agent_factory, money, has_inventory, expected
-    ):
+    def test_bankruptcy_conditions(self, agent_factory, money, has_inventory, expected):
         """Test various bankruptcy scenarios."""
         agent = agent_factory(money=money)
         if has_inventory:
@@ -100,9 +94,7 @@ class TestAgentProductionCheck:
         city_without_factory = city_factory(factory=[])
 
         assert agent._is_produced_locally(city_with_factory, metal_item_name)
-        assert not agent._is_produced_locally(
-            city_without_factory, metal_item_name
-        )
+        assert not agent._is_produced_locally(city_without_factory, metal_item_name)
 
 
 class TestAgentTravelPlanning:
@@ -124,9 +116,7 @@ class TestAgentTravelPlanning:
         agent._plan_next_travel(cities)
         assert agent.travel_plan == ("B", None)
 
-    def test_plan_next_travel_considers_buy_then_sell(
-        self, agent_factory, city_factory
-    ):
+    def test_plan_next_travel_considers_buy_then_sell(self, agent_factory, city_factory):
         """AI should find profitable routes even with an empty inventory."""
         a = city_factory(
             "A",
