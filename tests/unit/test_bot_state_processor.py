@@ -23,7 +23,13 @@ def bot_data():
     return {
         "name": "test_bot_1",
         "zloto": 1000,
-        "ekwipunek": {"metal": 10, "gems": 5, "food": 20, "fuel": 15, "relics": 1},
+        "ekwipunek": {
+            "metal": 10,
+            "gems": 5,
+            "food": 20,
+            "fuel": 15,
+            "relics": 1,
+        },
     }
 
 
