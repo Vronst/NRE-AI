@@ -7,11 +7,7 @@ from nre_ai.bot_state_processor import BotStateProcessor
 
 
 class BotManager:
-<<<<<<< HEAD
     """Responsible for running multiple AI agents and saving their states."""
-=======
-    """Coordinating class for running multiple AI agents and saving their states."""
->>>>>>> main
 
     def __init__(self, processor: BotStateProcessor):
         """Initializes the BotManager.

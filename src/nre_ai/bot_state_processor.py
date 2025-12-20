@@ -14,11 +14,7 @@ class BotStateProcessor:
             base_path (str | None): The directory where bot state files are
                 stored. If None, it defaults to the value of the
                 'BOT_STATE_PATH' environment variable.
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> main
         Raises:
             ValueError: If base_path is not provided and 'BOT_STATE_PATH'
                 is not set.
@@ -27,19 +23,11 @@ class BotStateProcessor:
             base_path = os.getenv("BOT_STATE_PATH")
             if not base_path:
                 raise ValueError(
-<<<<<<< HEAD
                     "base_path must be provided or 'BOT_STATE_PATH'"
                     + " environment variable must be set."
                 )
 
         self.base_path: str = base_path
-=======
-                    "base_path must be provided or 'BOT_STATE_PATH' "
-                    "environment variable must be set."
-                )
-
-        self.base_path = base_path
->>>>>>> main
         os.makedirs(self.base_path, exist_ok=True)
 
     def _get_bot_file_path(self, bot_name: str) -> str:
@@ -58,7 +46,6 @@ class BotStateProcessor:
 
         Args:
             bot_data (dict): The bot's state data, including a 'name' key.
-<<<<<<< HEAD
 
         Raises:
             KeyError: If 'name' is not in bot_data.
@@ -70,19 +57,6 @@ class BotStateProcessor:
         file_path = self._get_bot_file_path(bot_name)
 
         with open(file_path, "w") as f:
-=======
-        
-        Raises:
-            KeyError: If 'name' is not in bot_data.
-        """
-        if 'name' not in bot_data:
-            raise KeyError("Bot data must include a 'name' for identification.")
-        
-        bot_name = bot_data['name']
-        file_path = self._get_bot_file_path(bot_name)
-
-        with open(file_path, 'w') as f:
->>>>>>> main
             json.dump(bot_data, f, indent=2)
         print(f"Bot state for '{bot_name}' saved to {file_path}")
 
@@ -93,20 +67,12 @@ class BotStateProcessor:
             bot_name (str): The unique name of the bot.
 
         Returns:
-<<<<<<< HEAD
             dict | None: The loaded bot data, or None if the
                 file doesn't exist.
-=======
-            dict | None: The loaded bot data, or None if the file doesn't exist.
->>>>>>> main
         """
         file_path = self._get_bot_file_path(bot_name)
         if not os.path.exists(file_path):
             return None
 
-<<<<<<< HEAD
         with open(file_path) as f:
-=======
-        with open(file_path, 'r') as f:
->>>>>>> main
             return json.load(f)
