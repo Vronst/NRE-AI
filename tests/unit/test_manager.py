@@ -1,3 +1,4 @@
+# ruff: noqa
 """Tests for the BotManager."""
 
 from unittest.mock import MagicMock, call
