@@ -21,9 +21,7 @@ def run_ai_simulation():
     # otherwise delete this
     # after -> because before is only for processor
     initial_cities = processor.get_dict_of_cities("after")
-    initial_city_name = (
-        list(initial_cities.keys())[0] if initial_cities else None
-    )
+    initial_city_name = list(initial_cities.keys())[0] if initial_cities else None
 
     if not initial_city_name:
         print("Error: No cities found in data file.")
@@ -68,10 +66,7 @@ def run_ai_simulation():
         print(f"End of turn {turn}. AI has {agent.money:.2f} money.")
 
     print("\n--- Simulation Finished ---")
-    print(
-        f"Final AI state: Money = {agent.money:.2f},"
-        f" Inventory = {agent.inventory}"
-    )
+    print(f"Final AI state: Money = {agent.money:.2f}, Inventory = {agent.inventory}")
 
 
 if __name__ == "__main__":
