@@ -1,19 +1,12 @@
 services:
-
   nre_ai:
-
     build: .
     container_name: nre
+    stdin_open: true # Equivalent to -i
+    tty: true # Equivalent to -t
+    command: /bin/bash
     restart: unless-stopped
-    # depends_on:
-    #   - db
-    # ports:
-    #   - "8080:8080"
-    #   - "8000:8000"
-    #   - "9000:9000"
     working_dir: /app
-    # need to be changed to named volume like postgres
-    # on produciton level only
     volumes:
       - ./src/:/app/src
       - ./submodules/:/app/submodules
@@ -24,30 +17,10 @@ services:
 
     environment:
       UV_LINK_MODE: copy
-      PATH: "/app/.venv/bin:$PATH"
       CI: true
     networks:
       - app-network
 
-  # db:
-
-  #   image: postgres:17.2
-  #   container_name: nre_db
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: vronst
-  #     POSTGRES_PASSWORD: secret
-  #     POSTGRES_DB: nre_db
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - app-network
-
 networks:
   app-network:
     driver: bridge
-
-# named volumes
-# volumes:
-#   postgres_data:
-
