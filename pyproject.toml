@@ -49,7 +49,7 @@ testpaths = "tests/"
 pythonpath = "src/"
 
 [tool.ruff]
-line-length = 79
+line-length = 90
 indent-width = 4
 exclude = [
 	"docs",

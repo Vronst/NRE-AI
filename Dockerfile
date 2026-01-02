@@ -4,8 +4,6 @@ RUN pip install uv
 
 # makes uv copy files instead of creating links
 ENV UV_LINK_MODE=copy
-# make .venv as primary python
-ENV PATH="/app/.venv/bin:$PATH"
 ENV CI=true
 ENV DATA_PATH='/app/submodules/NRE/Assets/Data/Save/'
 
@@ -35,4 +33,4 @@ EXPOSE 8000
 EXPOSE 9000
 
 # CMD ["uv", "run", "nre-ai"]
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]

@@ -4,7 +4,7 @@ import random
 
 # it works trust me xd
 from nrecity import City
-from nrecity import factory as factory_map
+from nrecity import factory as nrecity_factory_map
 
 """
 Current issues:
@@ -18,28 +18,47 @@ Current issues:
 class AIAgent:
     """Represents the AI agent."""
 
-    def __init__(self, money: int, initial_city: str):
+    def __init__(
+        self,
+        name: str,
+        money: int,
+        initial_city: str,
+        factory_map: dict | None = None,
+    ):
         """Initializes the AI agent.
 
         Args:
+            name (str): The unique name of the bot.
             money (int): Initial amount of money.
             initial_city (str): The name of the starting city.
+            factory_map (dict | None): A map of commodities to factories.
+                If None, uses the default from nrecity.
         """
+        self.name = name
         self.money = money
-        # {commodity_name: {'quantity': x, 'avg_buy_price': y}}
         self.inventory = {}
         self.current_city_name = initial_city
-        self.travel_plan = (
-            None  # Tuple: (destination_city_name, best_commodity)
-        )
+        self.travel_plan = None
+        self.factory_map = factory_map if factory_map is not None else nrecity_factory_map
+
+    def to_dict(self) -> dict:
+        """Exports the agent's state to a dictionary compatible with player.json.
+
+        Returns:
+            dict: The agent's state in the required format.
+        """
+        return {
+            "name": self.name,
+            "zloto": self.money,
+            "ekwipunek": {
+                item: details["quantity"] for item, details in self.inventory.items()
+            },
+        }
 
     def _is_produced_locally(self, city: City, item_name: str) -> bool:
         """Checks if a commodity is likely produced in the city."""
-        # Simple heuristic to determine if an item is local
-        # FIXME:
-        # will we ever have different setup of commodieites?
-        if item_name in factory_map:
-            return factory_map[item_name] in city.factory
+        if item_name in self.factory_map:
+            return self.factory_map[item_name] in city.factory
         return False
 
     def take_turn(self, cities: dict[str, City]):
@@ -132,9 +151,7 @@ class AIAgent:
                 # Update average buy price
                 current_quant = self.inventory[item_name]["quantity"]
                 current_avg = self.inventory[item_name]["avg_buy_price"]
-                new_total_cost = (current_quant * current_avg) + (
-                    quantity_to_buy * price
-                )
+                new_total_cost = (current_quant * current_avg) + (quantity_to_buy * price)
                 new_total_quant = current_quant + quantity_to_buy
 
                 self.inventory[item_name]["avg_buy_price"] = (
@@ -231,8 +248,7 @@ class AIAgent:
             if cheapest_item:
                 item_name, details = cheapest_item
                 print(
-                    f"AI has empty inventory, buying cheapest "
-                    f"available item: {item_name}"
+                    f"AI has empty inventory, buying cheapest available item: {item_name}"
                 )
                 acquire(item_name, details, details["price"])
 
@@ -259,9 +275,7 @@ class AIAgent:
                     and item_name in destination_city.commodities
                     and destination_city.commodities[item_name]
                 ):
-                    sell_price = destination_city.commodities[item_name][
-                        "price"
-                    ]
+                    sell_price = destination_city.commodities[item_name]["price"]
                     avg_buy_price = inv_details["avg_buy_price"]
                     profit_per_unit = sell_price - avg_buy_price
 
@@ -286,9 +300,7 @@ class AIAgent:
                         continue
 
                     buy_price = buy_details["price"]
-                    sell_price = destination_city.commodities[item_name][
-                        "price"
-                    ]
+                    sell_price = destination_city.commodities[item_name]["price"]
 
                     profit_per_unit = sell_price - buy_price
 
@@ -309,9 +321,7 @@ class AIAgent:
         else:
             if current_city.connections:
                 # Filter out cities not present in the main dictionary
-                valid_connections = [
-                    c for c in current_city.connections if c in cities
-                ]
+                valid_connections = [c for c in current_city.connections if c in cities]
                 if valid_connections:
                     random_destination = random.choice(valid_connections)
                     self.travel_plan = (random_destination, None)
