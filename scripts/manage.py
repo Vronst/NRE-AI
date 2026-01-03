@@ -4,7 +4,7 @@ import os
 
 from nrecity import CityProcessor, JsonManager
 
-from nre_ai.agent import AIAgent
+from nre_ai.agent import AIAgent, RLAgent
 
 
 def run_ai_simulation():
@@ -27,8 +27,28 @@ def run_ai_simulation():
         print("Error: No cities found in data file.")
         return
 
-    agent = AIAgent(money=1000, initial_city=initial_city_name)
-    print(f"AI starts with {agent.money} money in {agent.current_city_name}.")
+    # --- Agent Setup ---
+    # Determine paths relative to the project root
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    
+    model_path = os.path.join(project_root, "models", "nre_ppo_bot.zip")
+    cities_static_path = os.path.join(project_root, "submodules", "NRE", "Assets", "Data", "Save", "miasta.json")
+
+    if os.path.exists(model_path) and os.path.exists(cities_static_path):
+        print(f"Found trained model at: {model_path}")
+        agent = RLAgent(
+            name="RL_Bot",
+            money=1000,
+            initial_city=initial_city_name,
+            model_path=model_path,
+            cities_data_path=cities_static_path
+        )
+    else:
+        print("Trained model not found. Using default Rule-Based Agent.")
+        agent = AIAgent(name="Simple_Bot", money=1000, initial_city=initial_city_name)
+
+    print(f"Agent '{agent.name}' starts with {agent.money} money in {agent.current_city_name}.")
 
     # 2. Simulation Loop
     for turn in range(1, 101):

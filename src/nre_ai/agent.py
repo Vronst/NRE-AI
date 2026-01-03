@@ -1,5 +1,6 @@
 """Base simple AI."""
 
+import json
 import random
 
 # it works trust me xd
@@ -40,6 +41,9 @@ class AIAgent:
         self.current_city_name = initial_city
         self.travel_plan = None
         self.factory_map = factory_map if factory_map is not None else nrecity_factory_map
+        
+        # Track visited cities for RL observation/rewards
+        self.visited_cities_history = [initial_city]
 
     def to_dict(self) -> dict:
         """Exports the agent's state to a dictionary compatible with player.json.
@@ -71,6 +75,9 @@ class AIAgent:
                 if self.money >= fee:
                     self.money -= fee
                     self.current_city_name = destination_name
+                    self.visited_cities_history.append(destination_name)
+                    if len(self.visited_cities_history) > 20:
+                        self.visited_cities_history.pop(0)
                     print(
                         f"AI traveled to {self.current_city_name},"
                         f" paid {fee} fee. Money: {self.money}"
@@ -93,6 +100,45 @@ class AIAgent:
         # 4. Decide where to go next
         self._plan_next_travel(cities)
 
+    def sell_commodity(self, city: City, item_name: str) -> bool:
+        """Sells a specific commodity in the current city.
+
+        Args:
+            city (City): The city object.
+            item_name (str): The name of the commodity to sell.
+
+        Returns:
+            bool: True if the sale was successful, False otherwise.
+        """
+        if item_name not in self.inventory or item_name not in city.commodities:
+            return False
+
+        details = city.commodities[item_name]
+        if not details:
+            return False
+
+        market_price = details["price"]
+        quantity_to_sell = self.inventory[item_name]["quantity"]
+
+        if quantity_to_sell <= 0:
+            return False
+
+        # Ensure quantity exists before adding
+        if details["quantity"] is None:
+            details["quantity"] = 0
+
+        self.money += quantity_to_sell * market_price
+        details["quantity"] += quantity_to_sell
+
+        print(
+            f"AI sold {quantity_to_sell} of {item_name} in "
+            f"{self.current_city_name} for {market_price}"
+            f" each. Money: {self.money}"
+        )
+
+        del self.inventory[item_name]
+        return True
+
     def _sell_commodities(self, city: City):
         """Sells commodities in the current city if profitable."""
         commodities_to_sell = list(self.inventory.keys())
@@ -103,70 +149,69 @@ class AIAgent:
 
                 # Sell if price is higher than average buy price + a 10% margin
                 if market_price > avg_buy_price * 1.1:
-                    quantity_to_sell = self.inventory[item_name]["quantity"]
+                    self.sell_commodity(city, item_name)
 
-                    # Ensure quantity exists before adding
-                    if city.commodities[item_name]["quantity"] is None:
-                        city.commodities[item_name]["quantity"] = 0
+    def buy_commodity(self, city: City, item_name: str) -> bool:
+        """Buys a specific commodity in the current city.
 
-                    self.money += quantity_to_sell * market_price
-                    city.commodities[item_name]["quantity"] += quantity_to_sell
+        Args:
+            city (City): The city object.
+            item_name (str): The name of the commodity to buy.
 
-                    print(
-                        f"AI sold {quantity_to_sell} of {item_name} in "
-                        f"{self.current_city_name} for {market_price}"
-                        f" each. Money: {self.money}"
-                    )
+        Returns:
+            bool: True if the purchase was successful, False otherwise.
+        """
+        if item_name not in city.commodities:
+            return False
 
-                    del self.inventory[item_name]
+        details = city.commodities[item_name]
+        if not details or details["quantity"] <= 0:
+            return False
+
+        price = details["price"]
+        if price <= 0:
+            return False
+
+        # Spend max 50% of *current* money on a single transaction
+        max_buy_by_money = int((self.money * 0.5) / price)
+
+        # Ensure we don't try to buy more than is available
+        quantity_to_buy = min(max_buy_by_money, details["quantity"])
+
+        if quantity_to_buy > 0:
+            self.money -= quantity_to_buy * price
+            details["quantity"] -= quantity_to_buy
+
+            if item_name not in self.inventory:
+                self.inventory[item_name] = {
+                    "quantity": 0,
+                    "avg_buy_price": 0,
+                }
+
+            # Update average buy price
+            current_quant = self.inventory[item_name]["quantity"]
+            current_avg = self.inventory[item_name]["avg_buy_price"]
+            new_total_cost = (current_quant * current_avg) + (quantity_to_buy * price)
+            new_total_quant = current_quant + quantity_to_buy
+
+            self.inventory[item_name]["avg_buy_price"] = (
+                new_total_cost / new_total_quant
+            )
+            self.inventory[item_name]["quantity"] += quantity_to_buy
+
+            print(
+                f"AI bought {quantity_to_buy} of {item_name} in "
+                f"{self.current_city_name} for {price} each."
+                f" Money: {self.money}"
+            )
+            return True
+        return False
 
     def _buy_commodities(self, city: City):
         """Buys commodities in the current city.
 
         Prioritizing the best deals.
         """
-
-        def acquire(item_name, details, price):
-            """Helper function to purchase a commodity."""
-            # Spend max 50% of *current* money on a single transaction
-            # Ensure price is not zero to avoid division error
-            if price <= 0:
-                return False
-
-            max_buy_by_money = int((self.money * 0.5) / price)
-
-            # Ensure we don't try to buy more than is available
-            quantity_to_buy = min(max_buy_by_money, details["quantity"])
-
-            if quantity_to_buy > 0:
-                self.money -= quantity_to_buy * price
-                details["quantity"] -= quantity_to_buy
-
-                if item_name not in self.inventory:
-                    self.inventory[item_name] = {
-                        "quantity": 0,
-                        "avg_buy_price": 0,
-                    }
-
-                # Update average buy price
-                current_quant = self.inventory[item_name]["quantity"]
-                current_avg = self.inventory[item_name]["avg_buy_price"]
-                new_total_cost = (current_quant * current_avg) + (quantity_to_buy * price)
-                new_total_quant = current_quant + quantity_to_buy
-
-                self.inventory[item_name]["avg_buy_price"] = (
-                    new_total_cost / new_total_quant
-                )
-                self.inventory[item_name]["quantity"] += quantity_to_buy
-
-                print(
-                    f"AI bought {quantity_to_buy} of {item_name} in "
-                    f"{self.current_city_name} for {price} each."
-                    f" Money: {self.money}"
-                )
-                return True
-            return False
-
         # 1. Identify all potential deals
         deals = []
         for item_name, details in city.commodities.items():
@@ -221,7 +266,7 @@ class AIAgent:
             if self.money < deal["price"]:
                 continue
 
-            acquire(deal["name"], deal["details"], deal["price"])
+            self.buy_commodity(city, deal["name"])
 
         # 4. If inventory is *still* empty, buy *anything* affordable
         # This checks inventory quantity, not just if we bought
@@ -250,7 +295,7 @@ class AIAgent:
                 print(
                     f"AI has empty inventory, buying cheapest available item: {item_name}"
                 )
-                acquire(item_name, details, details["price"])
+                self.buy_commodity(city, item_name)
 
     def _plan_next_travel(self, cities: dict[str, City]):
         """Analyzes connected cities and plans the most profitable trip."""
@@ -333,3 +378,46 @@ class AIAgent:
     def is_bankrupt(self) -> bool:
         """Checks if the AI is bankrupt."""
         return self.money <= 0 and not self.inventory
+
+
+class RLAgent(AIAgent):
+    """An AI agent controlled by a trained Reinforcement Learning model."""
+
+    def __init__(
+        self,
+        model_path: str,
+        cities_data_path: str,
+        *args,
+        **kwargs,
+    ):
+        """Initializes the RLAgent."""
+        super().__init__(*args, **kwargs)
+
+        # Late import to avoid hard dependency if not using RL
+        from stable_baselines3 import PPO
+        from nre_ai.game_env import get_observation_from_state, perform_action
+
+        print(f"RLAgent '{self.name}': Loading model from {model_path}...")
+        self.model = PPO.load(model_path)
+        self._get_observation_func = get_observation_from_state
+        self._perform_action_func = perform_action
+
+        # Load maps required for observation/action conversion
+        with open(cities_data_path, "r") as f:
+            data = json.load(f)
+
+        # Reconstruct maps exactly as in GameTradingEnv
+        cities_list = [City(**c) for c in data["cities"]]
+        self._city_map = {c.name: i for i, c in enumerate(cities_list)}
+
+        first_city_commodities = next(iter(cities_list)).commodities.keys()
+        self._commodity_map = {name: i for i, name in enumerate(first_city_commodities)}
+        self._commodity_map_keys = list(self._commodity_map.keys())
+
+    def take_turn(self, cities: dict[str, City]):
+        """Uses the RL model to decide the next action."""
+        obs = self._get_observation_func(self, cities, self._city_map, self._commodity_map)
+        action, _ = self.model.predict(obs, deterministic=True)
+        
+        # Execute the action (modifies agent and city state in place)
+        self._perform_action_func(self, cities, self._commodity_map_keys, int(action))
