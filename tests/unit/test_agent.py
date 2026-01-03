@@ -35,10 +35,15 @@ class TestAgentInitialization:
         expected_dict = {
             "name": "bot1",
             "zloto": 500,
+            "current_city": DEFAULT_CITY,
             "ekwipunek": {
                 "metal": 20,
                 "food": 100,
             },
+            "inventory_full": {
+                "metal": {"quantity": 20, "avg_buy_price": 10},
+                "food": {"quantity": 100, "avg_buy_price": 2},
+            }
         }
         assert agent.to_dict() == expected_dict
 
@@ -48,7 +53,9 @@ class TestAgentInitialization:
         expected_dict = {
             "name": "bot2",
             "zloto": 100,
+            "current_city": DEFAULT_CITY,
             "ekwipunek": {},
+            "inventory_full": {}
         }
         assert agent.to_dict() == expected_dict
 

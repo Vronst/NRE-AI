@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b26dbba-8720-490c-b5cb-8c84fa1a6a1d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/nre_ai/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/nre_ai/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/nre_ai/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/nre_ai/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submodules/NRE" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submodules/NRE/Assets/Data/Save/miasta.json" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE/Assets/Data/Save/miasta.json" afterDir="false" />
     </list>

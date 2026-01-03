@@ -39,7 +39,9 @@ class AIAgent:
         self.inventory = {}
         self.current_city_name = initial_city
         self.travel_plan = None
-        self.factory_map = factory_map if factory_map is not None else nrecity_factory_map
+        self.factory_map = (
+            factory_map if factory_map is not None else nrecity_factory_map
+        )
 
     @classmethod
     def from_dict(cls, data: dict) -> "AIAgent":
@@ -52,14 +54,10 @@ class AIAgent:
             AIAgent: The restored agent.
         """
         initial_city = data["current_city"]
-        agent = cls(
-            name=data["name"],
-            money=data["zloto"],
-            initial_city=initial_city
-        )
-        
+        agent = cls(name=data["name"], money=data["zloto"], initial_city=initial_city)
+
         agent.inventory = data.get("inventory_full", {})
-                
+
         return agent
 
     def to_dict(self) -> dict:
@@ -75,7 +73,7 @@ class AIAgent:
             "ekwipunek": {
                 item: details["quantity"] for item, details in self.inventory.items()
             },
-            "inventory_full": self.inventory
+            "inventory_full": self.inventory,
         }
 
     def _is_produced_locally(self, city: City, item_name: str) -> bool:
@@ -174,7 +172,9 @@ class AIAgent:
                 # Update average buy price
                 current_quant = self.inventory[item_name]["quantity"]
                 current_avg = self.inventory[item_name]["avg_buy_price"]
-                new_total_cost = (current_quant * current_avg) + (quantity_to_buy * price)
+                new_total_cost = (current_quant * current_avg) + (
+                    quantity_to_buy * price
+                )
                 new_total_quant = current_quant + quantity_to_buy
 
                 self.inventory[item_name]["avg_buy_price"] = (
