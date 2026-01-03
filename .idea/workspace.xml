@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="4b26dbba-8720-490c-b5cb-8c84fa1a6a1d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submodules/NRE" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submodules/NRE/Assets/Data/Save/miasta.json" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE/Assets/Data/Save/miasta.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit/test_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

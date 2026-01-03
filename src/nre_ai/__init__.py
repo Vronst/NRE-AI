@@ -30,9 +30,7 @@ def main() -> None:
         "--seed", nargs=1, type=int, help="Seed for random number generator"
     )
     parser.add_argument("-r", "--reset", action="store_true", help="Reset the cities")
-    parser.add_argument(
-        "--skip", action="store_true", help="Skip running the simulation"
-    )
+    parser.add_argument("--skip", action="store_true", help="Skip running the simulation")
     parser.add_argument("-s", "--skip-events", action="store_true", help="Skip events")
     parser.add_argument(
         "-a",
