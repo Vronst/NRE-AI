@@ -58,9 +58,26 @@ def main() -> None:
         print("Processing AI's...")
         bot_processor = BotStateProcessor(PATH)
         bot_manager = BotManager(bot_processor)
-        for x in range(int(args.ai[0])):
-            city: str = random.choice(["Rybnik", "Aleksandria", "Porto", "Afryka"])
-            bot_manager.add_bot(AIAgent("bot" + str(x), 10000, city))
+        
+        # Handle args.ai being a list (default) or a string (command line arg)
+        ai_arg = args.ai
+        if isinstance(ai_arg, list):
+            ai_arg = ai_arg[0]
+        num_bots = int(ai_arg)
+        
+        for x in range(num_bots):
+            bot_name = "bot" + str(x)
+            bot_data = bot_processor.load_bot_state(bot_name)
+            
+            if bot_data:
+                print(f"Loading existing bot: {bot_name}")
+                bot = AIAgent.from_dict(bot_data)
+            else:
+                print(f"Creating new bot: {bot_name}")
+                city: str = random.choice(["Rybnik", "Aleksandria", "Porto", "Afryka"])
+                bot = AIAgent(bot_name, 10000, city)
+                
+            bot_manager.add_bot(bot)
 
         bot_manager.run_all_turns(city_processor.get_dict_of_cities("after"))
 
