@@ -15,6 +15,7 @@ dependencies = [
     "nre-city",
     "numpy>=2.2.6",
     "pandas>=2.2.3",
+    "ruff>=0.14.10",
     "scikit-learn>=1.6.1",
     "seaborn>=0.13.2",
 ]
