@@ -45,6 +45,23 @@ class AIAgent:
         # Track visited cities for RL observation/rewards
         self.visited_cities_history = [initial_city]
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "AIAgent":
+        """Creates an AIAgent instance from a dictionary state.
+
+        Args:
+            data (dict): The dictionary containing bot state.
+
+        Returns:
+            AIAgent: The restored agent.
+        """
+        initial_city = data["current_city"]
+        agent = cls(name=data["name"], money=data["zloto"], initial_city=initial_city)
+
+        agent.inventory = data.get("inventory_full", {})
+
+        return agent
+
     def to_dict(self) -> dict:
         """Exports the agent's state to a dictionary compatible with player.json.
 
@@ -54,9 +71,11 @@ class AIAgent:
         return {
             "name": self.name,
             "zloto": self.money,
+            "current_city": self.current_city_name,
             "ekwipunek": {
                 item: details["quantity"] for item, details in self.inventory.items()
             },
+            "inventory_full": self.inventory,
         }
 
     def _is_produced_locally(self, city: City, item_name: str) -> bool:

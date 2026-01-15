@@ -20,12 +20,11 @@ services:
       - ./scripts:/app/scripts
       - ./tests/:/app/tests
       - ./pyproject.toml:/app/pyproject.toml
-      - ./models:/app/models
       - ./uv.lock:/app/uv.lock
 
     environment:
       UV_LINK_MODE: copy
-      # PATH: "/app/.venv/bin:$PATH"
+      PATH: "/app/.venv/bin:$PATH"
       CI: true
     networks:
       - app-network
@@ -51,3 +50,4 @@ networks:
 # named volumes
 # volumes:
 #   postgres_data:
+
