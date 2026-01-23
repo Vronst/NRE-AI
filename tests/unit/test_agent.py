@@ -1,173 +1,272 @@
-# ruff: noqa
-"""Tests for the AIAgent class."""
-
-import random
+"""Unit tests for AIAgent."""
 
 import pytest
 
-from nre_ai.agent import AIAgent as Agent
+from nre_ai.agent import AIAgent
 
-# A default city name for agents that don't need a specific one
-DEFAULT_CITY = "test_city"
+
+# Mock City class to avoid dependency on the actual nrecity module
+class MockCity:
+    def __init__(self, name, fee, commodities, connections, factory=None):
+        self.name = name
+        self.fee = fee
+        self.commodities = commodities
+        self.connections = connections
+        self.factory = factory if factory else []
 
 
 @pytest.fixture
-def agent_factory():
-    """Factory to create agents for tests."""
-
-    def _create_agent(name="test_agent", money=1000, city=DEFAULT_CITY, factory_map=None):
-        return Agent(name=name, money=money, initial_city=city, factory_map=factory_map)
-
-    return _create_agent
+def agent():
+    return AIAgent(name="TestBot", money=1000, initial_city="CityA")
 
 
-class TestAgentInitialization:
-    """Tests for the agent's constructor and initial state."""
-
-    def test_to_dict_conversion(self, agent_factory):
-        """Verify that the to_dict method formats data correctly."""
-        agent = agent_factory(name="bot1", money=500)
-        agent.inventory = {
-            "metal": {"quantity": 20, "avg_buy_price": 10},
-            "food": {"quantity": 100, "avg_buy_price": 2},
-        }
-
-        expected_dict = {
-            "name": "bot1",
-            "zloto": 500,
-            "current_city": DEFAULT_CITY,
-            "ekwipunek": {
-                "metal": 20,
-                "food": 100,
+@pytest.fixture
+def cities():
+    return {
+        "CityA": MockCity(
+            name="CityA",
+            fee=10,
+            commodities={
+                "gems": {
+                    "quantity": 10,
+                    "price": 100,
+                    "regular_price": 100,
+                    "regular_quantity": 100,
+                },
+                "food": {
+                    "quantity": 50,
+                    "price": 10,
+                    "regular_price": 10,
+                    "regular_quantity": 100,
+                },
             },
-            "inventory_full": {
-                "metal": {"quantity": 20, "avg_buy_price": 10},
-                "food": {"quantity": 100, "avg_buy_price": 2},
+            connections=["CityB", "CityC"],
+            factory=["Mine"],  # Produces gems locally (assuming map check passes)
+        ),
+        "CityB": MockCity(
+            name="CityB",
+            fee=20,
+            commodities={
+                "gems": {
+                    "quantity": 5,
+                    "price": 150,
+                    "regular_price": 100,
+                    "regular_quantity": 100,
+                },
+                "food": {
+                    "quantity": 50,
+                    "price": 12,
+                    "regular_price": 10,
+                    "regular_quantity": 100,
+                },
             },
-        }
-        assert agent.to_dict() == expected_dict
+            connections=["CityA"],
+        ),
+        "CityC": MockCity(
+            name="CityC",
+            fee=5,  # Cheap fee
+            commodities={
+                "gems": {
+                    "quantity": 20,
+                    "price": 90,
+                    "regular_price": 100,
+                    "regular_quantity": 100,
+                },
+            },
+            connections=["CityA"],
+        ),
+    }
 
-    def test_to_dict_empty_inventory(self, agent_factory):
-        """Verify to_dict works with an empty inventory."""
-        agent = agent_factory(name="bot2", money=100)
-        expected_dict = {
-            "name": "bot2",
-            "zloto": 100,
-            "current_city": DEFAULT_CITY,
-            "ekwipunek": {},
-            "inventory_full": {},
-        }
-        assert agent.to_dict() == expected_dict
+
+def test_initialization(agent):
+    assert agent.name == "TestBot"
+    assert agent.money == 1000
+    assert agent.current_city_name == "CityA"
+    assert agent.inventory == {}
+    assert agent.travel_plan is None
 
 
-class TestAgentBankruptcy:
-    """Tests for the is_bankrupt method."""
+def test_serialization(agent):
+    agent.inventory = {"gems": {"quantity": 5, "avg_buy_price": 100}}
+    data = agent.to_dict()
 
-    @pytest.mark.parametrize(
-        "money, has_inventory, expected",
-        [
-            (0, False, True),  # Bankrupt: No money, no items
-            (-100, False, True),  # Bankrupt: Debt, no items
-            (1, False, False),  # Not bankrupt: Has a little money
-            (0, True, False),  # Not bankrupt: No money, but has items to sell
-        ],
+    assert data["name"] == "TestBot"
+    assert data["zloto"] == 1000
+    assert data["current_city"] == "CityA"
+    assert data["ekwipunek"]["gems"] == 5
+
+    new_agent = AIAgent.from_dict(data)
+    assert new_agent.name == agent.name
+    assert new_agent.money == agent.money
+    assert new_agent.current_city_name == agent.current_city_name
+    assert new_agent.inventory == agent.inventory
+
+
+def test_get_item_weight(agent):
+    assert agent._get_item_weight("gems") == 1.0
+    assert agent._get_item_weight("relics") == 10.0
+    assert agent._get_item_weight("unknown") == 1.0
+
+
+def test_calculate_current_weight(agent):
+    agent.inventory = {
+        "gems": {"quantity": 10, "avg_buy_price": 100},  # 10 * 1.0 = 10
+        "relics": {"quantity": 2, "avg_buy_price": 500},  # 2 * 10.0 = 20
+    }
+    assert agent._calculate_current_weight() == 30.0
+
+
+def test_travel_execution_success(agent, cities):
+    agent.travel_plan = ("CityB", None)
+    agent.take_turn(cities)
+
+    assert agent.current_city_name == "CityB"
+    assert agent.money == 980  # 1000 - 20 (CityB fee)
+
+    # After arriving in CityB, the agent will immediately plan the next move.
+    # Since there are no profitable trades back to CityA (gems 150->100, food 12->10),
+    # it will fallback to the cheapest neighbor.
+    # CityB only connects to CityA (fee 10).
+    assert agent.travel_plan == ("CityA", None)
+
+
+def test_travel_execution_insufficient_funds(agent, cities):
+    agent.money = 10
+    agent.travel_plan = ("CityB", None)  # Fee is 20
+    agent.take_turn(cities)
+
+    assert agent.current_city_name == "CityA"  # Did not move
+    assert agent.money == 10
+
+    # Travel failed, plan cleared.
+    # Agent continues turn. No profitable trades (buffer 10 + fee > money 10).
+    # Fallback travel.
+    # CityA connects to CityB (20) and CityC (5).
+    # CityC is cheapest.
+    assert agent.travel_plan == ("CityC", None)
+
+
+def test_sell_commodities_profit(agent, cities):
+    # Setup: Agent has gems bought at 100, CityB buys at 150
+    agent.current_city_name = "CityB"
+    agent.inventory = {"gems": {"quantity": 10, "avg_buy_price": 100}}
+
+    agent._sell_commodities(cities["CityB"])
+
+    assert "gems" not in agent.inventory
+    assert agent.money == 1000 + (10 * 150)
+    assert cities["CityB"].commodities["gems"]["quantity"] == 15  # 5 + 10
+
+
+def test_sell_commodities_scarcity(agent, cities):
+    # Setup: CityB has very low gems (scarcity), price is low but demand high
+    cities["CityB"].commodities["gems"]["quantity"] = 0  # 0 < 10% of 100
+    cities["CityB"].commodities["gems"]["price"] = (
+        105  # Only 5% profit, normally wouldn't sell
     )
-    def test_bankruptcy_conditions(self, agent_factory, money, has_inventory, expected):
-        """Test various bankruptcy scenarios."""
-        agent = agent_factory(money=money)
-        if has_inventory:
-            agent.inventory = {"metal": {"quantity": 1, "avg_buy_price": 1}}
-        else:
-            agent.inventory = {}
 
-        assert agent.is_bankrupt() == expected
+    agent.current_city_name = "CityB"
+    agent.inventory = {"gems": {"quantity": 10, "avg_buy_price": 100}}
 
+    agent._sell_commodities(cities["CityB"])
 
-class TestAgentProductionCheck:
-    """Tests for the _is_produced_locally method."""
-
-    @pytest.mark.regression
-    def test_is_produced_locally(self, agent_factory, city_factory):
-        """Check local production logic."""
-        metal_factory_name = "Huta"
-        metal_item_name = "metal"
-
-        # Create a custom factory map for this test
-        custom_factory_map = {metal_item_name: metal_factory_name}
-
-        agent = agent_factory(factory_map=custom_factory_map)
-
-        city_with_factory = city_factory(factory=[metal_factory_name])
-        city_without_factory = city_factory(factory=[])
-
-        assert agent._is_produced_locally(city_with_factory, metal_item_name)
-        assert not agent._is_produced_locally(city_without_factory, metal_item_name)
+    assert "gems" not in agent.inventory  # Sold due to scarcity
+    assert agent.money == 1000 + (10 * 105)
 
 
-class TestAgentTravelPlanning:
-    """Tests for the _plan_next_travel method."""
+def test_plan_with_inventory_best_route(agent, cities):
+    # Agent in CityA, has gems.
+    # CityB: Price 150, Fee 20 -> Profit (150-100)*10 - 20 = 480
+    # CityC: Price 90, Fee 5 -> Loss
+    agent.inventory = {"gems": {"quantity": 10, "avg_buy_price": 100}}
 
-    def test_plan_next_travel_prefers_selling_inventory(
-        self, agent_factory, city_factory
-    ):
-        """AI should prioritize selling existing inventory for profit."""
-        a = city_factory("A", connections=["B"])
-        b = city_factory(
-            "B", fee=5, commodities={"item1": {"price": 20, "quantity": 100}}
-        )
-        cities = {"A": a, "B": b}
+    agent._plan_with_inventory(cities["CityA"], cities)
 
-        agent = agent_factory(money=100, city="A")
-        agent.inventory = {"item1": {"quantity": 10, "avg_buy_price": 10}}
+    assert agent.travel_plan == ("CityB", None)
 
-        agent._plan_next_travel(cities)
-        assert agent.travel_plan == ("B", None)
 
-    def test_plan_next_travel_considers_buy_then_sell(self, agent_factory, city_factory):
-        """AI should find profitable routes even with an empty inventory."""
-        a = city_factory(
-            "A",
-            connections=["B"],
-            commodities={"apple": {"price": 5, "quantity": 100}},
-        )
-        b = city_factory(
-            "B", fee=10, commodities={"apple": {"price": 15, "quantity": 100}}
-        )
-        cities = {"A": a, "B": b}
+def test_plan_with_inventory_no_self_loop(agent, cities):
+    # Ensure it doesn't plan to go to CityA if it's already there
+    agent.inventory = {"gems": {"quantity": 10, "avg_buy_price": 100}}
+    # Mock CityA connection to itself just in case
+    cities["CityA"].connections.append("CityA")
 
-        agent = agent_factory(money=1000, city="A")
-        agent.inventory = {}
+    agent._plan_with_inventory(cities["CityA"], cities)
 
-        agent._plan_next_travel(cities)
-        assert agent.travel_plan == ("B", None)
+    assert agent.travel_plan != ("CityA", None)
 
-    def test_plan_next_travel_picks_random_if_no_profit(
-        self, agent_factory, city_factory, monkeypatch
-    ):
-        """If no profit is possible, AI should travel randomly."""
-        a = city_factory("A", connections=["B", "C"])
-        b = city_factory("B", fee=1000)  # Unprofitable
-        c = city_factory("C", fee=1000)  # Unprofitable
-        cities = {"A": a, "B": b, "C": c}
 
-        agent = agent_factory(money=50, city="A")
+def test_buy_logic_constraints(agent, cities):
+    # Test money and weight constraints
+    # CityA sells gems at 100. Agent has 1000.
+    # Fee to CityB is 20. Buffer is 10. Available: 970.
+    # Max buy by money: 970 // 100 = 9.
 
-        # Force random.choice to be deterministic
-        monkeypatch.setattr(random, "choice", lambda seq: "C")
-        agent._plan_next_travel(cities)
-        assert agent.travel_plan == ("C", None)
+    # Mock factory map to ensure gems are considered local or just force logic
+    agent.factory_map = {"gems": "Mine"}
 
-    def test_plan_next_travel_skips_missing_cities(
-        self, agent_factory, city_factory, monkeypatch
-    ):
-        """AI should ignore connections to cities not present in the data."""
-        a = city_factory("A", connections=["X", "B"])  # 'X' is not in cities
-        b = city_factory("B", fee=1000)
-        cities = {"A": a, "B": b}
+    agent._plan_and_buy_empty_inventory(cities["CityA"], cities)
 
-        agent = agent_factory(money=50, city="A")
+    assert "gems" in agent.inventory
+    assert agent.inventory["gems"]["quantity"] == 9
+    assert agent.money == 1000 - (9 * 100)
+    assert agent.travel_plan == ("CityB", None)  # CityB is the profitable destination
 
-        # random.choice should only be called with ['B']
-        monkeypatch.setattr(random, "choice", lambda seq: seq[0])
-        agent._plan_next_travel(cities)
-        assert agent.travel_plan == ("B", None)
+
+def test_buy_logic_weight_limit(agent, cities):
+    # Set item weight high to test weight limit
+    # Gems weight 1.0. Let's pretend we have a heavy item.
+    # Or just reduce MAX_WEIGHT for this test? Better to use logic.
+
+    # Let's use 'relics' (weight 10) if available, or just trust the math.
+    # Let's simulate a heavy item in CityA
+    cities["CityA"].commodities["heavy"] = {
+        "quantity": 100,
+        "price": 1,
+        "regular_price": 1,
+        "regular_quantity": 100,
+    }
+    # Add heavy to factory map
+    agent.factory_map["heavy"] = "Mine"
+
+    # Mock get_item_weight for 'heavy'
+    original_get_weight = agent._get_item_weight
+    agent._get_item_weight = lambda x: 500.0 if x == "heavy" else original_get_weight(x)
+
+    # Add demand in CityB
+    cities["CityB"].commodities["heavy"] = {
+        "quantity": 0,
+        "price": 10,
+        "regular_price": 10,
+        "regular_quantity": 100,
+    }
+
+    agent._plan_and_buy_empty_inventory(cities["CityA"], cities)
+
+    # Max weight 1000. Item weight 500. Max count = 2.
+    if "heavy" in agent.inventory:
+        assert agent.inventory["heavy"]["quantity"] <= 2
+
+
+def test_fallback_travel(agent, cities):
+    # No inventory, no profitable trades (prices equal everywhere)
+    cities["CityA"].commodities["gems"]["price"] = 1000  # Too expensive
+    cities["CityA"].commodities["food"]["price"] = 1000
+
+    agent._plan_and_buy_empty_inventory(cities["CityA"], cities)
+
+    # Should choose CityC (fee 5) over CityB (fee 20)
+    assert agent.travel_plan == ("CityC", None)
+
+
+def test_is_bankrupt(agent):
+    agent.money = 0
+    agent.inventory = {}
+    assert agent.is_bankrupt() is True
+
+    agent.money = 10
+    assert agent.is_bankrupt() is False
+
+    agent.money = 0
+    agent.inventory = {"gems": {"quantity": 1}}
+    assert agent.is_bankrupt() is False

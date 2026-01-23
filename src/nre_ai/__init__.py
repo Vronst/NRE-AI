@@ -13,8 +13,10 @@ from nrecity import CityProcessor, DataManager, EventProcessor
 from .agent import AIAgent
 from .bot_state_processor import BotStateProcessor
 from .manager import BotManager
+from .rl_agent import RLAgent
 
 PATH: str = os.environ["DATA_PATH"]
+MODEL_PATH = "models/trading_bot_v1.zip"
 
 
 def needed_managers(data_manager: DataManager, path: str) -> None:
@@ -38,6 +40,11 @@ def main() -> None:
         nargs="?",
         default=[2],
         help="Run the AI, number of bots can be passed.",
+    )
+    parser.add_argument(
+        "--use-rl",
+        action="store_true",
+        help="Use Reinforcement Learning agents instead of rule-based agents.",
     )
 
     print("Processing arguments...")
@@ -69,13 +76,26 @@ def main() -> None:
             bot_name = "bot" + str(x)
             bot_data = bot_processor.load_bot_state(bot_name)
 
-            if bot_data:
-                print(f"Loading existing bot: {bot_name}")
-                bot = AIAgent.from_dict(bot_data)
+            if args.use_rl and os.path.exists(MODEL_PATH):
+                if bot_data:
+                    print(f"Loading existing RL bot: {bot_name}")
+                    bot = RLAgent.from_dict(bot_data, MODEL_PATH)
+                else:
+                    print(f"Creating new RL bot: {bot_name}")
+                    city: str = random.choice(
+                        ["Rybnik", "Aleksandria", "Porto", "Afryka"]
+                    )
+                    bot = RLAgent(bot_name, 10000, city, MODEL_PATH)
             else:
-                print(f"Creating new bot: {bot_name}")
-                city: str = random.choice(["Rybnik", "Aleksandria", "Porto", "Afryka"])
-                bot = AIAgent(bot_name, 10000, city)
+                if bot_data:
+                    print(f"Loading existing bot: {bot_name}")
+                    bot = AIAgent.from_dict(bot_data)
+                else:
+                    print(f"Creating new bot: {bot_name}")
+                    city: str = random.choice(
+                        ["Rybnik", "Aleksandria", "Porto", "Afryka"]
+                    )
+                    bot = AIAgent(bot_name, 10000, city)
 
             bot_manager.add_bot(bot)
 
