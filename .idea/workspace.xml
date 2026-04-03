@@ -5,10 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b26dbba-8720-490c-b5cb-8c84fa1a6a1d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_1/events.out.tfevents.1768604809.DESKTOP-BVEV9HF.29920.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_2/events.out.tfevents.1769123620.31ffb1eac73a.73.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_3/events.out.tfevents.1769124004.31ffb1eac73a.90.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_4/events.out.tfevents.1769125064.31ffb1eac73a.105.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_5/events.out.tfevents.1769125418.31ffb1eac73a.120.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_6/events.out.tfevents.1769126697.31ffb1eac73a.146.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/PPO_7/events.out.tfevents.1769128068.31ffb1eac73a.202.0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/trading_bot_v1.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress_rl_agent2_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress_rl_agent2_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress_rl_agent_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress_rl_agent_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress_rule_based_agent_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/simulation_progress_rule_based_agent_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/nre_ai/mechanics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/nre_ai/rl_agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/nre_ai/trading_env.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/nre_ai/train.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/unit/test_mechanics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/unit/test_rl_agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/unit/test_trading_env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nre_ai/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/nre_ai/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nre_ai/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/nre_ai/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submodules/NRE" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/submodules/NRE-City" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE-City" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/submodules/NRE-City/example_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE-City/example_data.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submodules/NRE/Assets/Data/Save/miasta.json" beforeDir="false" afterPath="$PROJECT_DIR$/submodules/NRE/Assets/Data/Save/miasta.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_city_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_city_data.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/unit/test_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
@@ -65,7 +95,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#37 on develop&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;stage&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/tomi3/PycharmProjects/NRE-AI/scripts&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
